@@ -101,13 +101,12 @@
       (eval-expro env t v)
       (uneval-valueo '() v expr))))
 
-#|
 (define main
   (lambda ()
-    (let ((id_ (eval-expr '() '(Lam x (Var x)))))
-      (let ((const_ (eval-expr '() '(Lam x (Lam y (Var x))))))
-        (let ((result (eval-expr `((id . ,id_) (const . ,const_)) '(App (Var const) (Var id)))))
-          result)))))
+    (run* (result)
+      (fresh (id_ const_)
+        (eval-expro '() '(Lam x (Var x)) id_)
+        (eval-expro '() '(Lam x (Lam y (Var x))) const_)
+        (eval-expro `((id . ,id_) (const . ,const_)) '(App (Var const) (Var id)) result)))))
 
 (printf "~s\n" (main))
-|#
