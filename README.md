@@ -17,6 +17,10 @@ Code in this repository:
 ##### `miniKanren-version`
 ###### `N.scm` (Will Byrd's translation of `N.scm` into miniKanren; tested under Chez Scheme)
 ###### `faster-miniKanren` (Michael Ballantyne's implementation of [faster-miniKanren](https://github.com/michaelballantyne/faster-miniKanren))
+##### `alphaKanren-version`
+###### `N.scm` (Will Byrd's translation of `N.scm` into alphaKanren; tested under Chez Scheme)
+###### `alphaKanren` (Dan Friedman and Will Byrd's implementation of [alphaKanren](https://github.com/webyrd/alphaKanren))
+
 
 Useful tutorials on normalization-by-evaluation:
 
