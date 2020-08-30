@@ -21,11 +21,11 @@
          (eval-expro env f vf)
          (eval-expro env x vx)
          (apply-expro vf vx val)))
-      ((fresh (x)
-         (exist (b)
-           (hash x env)
-           (== `(Lam ,(tie x b)) expr)
-           (== `(Closure ,env ,x ,b) val)))))))
+      ((fresh (a)
+         (exist (body)
+           (hash a env)
+           (== `(Lam ,(tie a body)) expr)
+           (== `(Closure ,env ,a ,body) val)))))))
 
 #|
 (run 1 (Y)
