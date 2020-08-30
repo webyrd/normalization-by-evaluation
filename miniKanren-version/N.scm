@@ -1,4 +1,5 @@
-;; load mk
+(load "faster-miniKanren/mk-vicare.scm")
+(load "faster-miniKanren/mk.scm")
 
 (define lookupo
   (lambda (x env val)
@@ -9,7 +10,7 @@
       (conde
         ((== x y) (== v val))
         ((=/= x y)
-         (lookupo x env^ v))))))
+         (lookupo x env^ val))))))
 
 (define eval-expro
   (lambda (env expr val)
@@ -110,3 +111,4 @@
         (eval-expro `((id . ,id_) (const . ,const_)) '(App (Var const) (Var id)) result)))))
 
 (printf "~s\n" (main))
+;; ((Closure ((x Closure () x (Var x))) y (Var x)))
