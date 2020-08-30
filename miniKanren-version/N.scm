@@ -68,17 +68,22 @@
          (=/= x y)
          (not-membero x ls^))))))
 
-#|
-(define uneval-value
-  (lambda (xs v)
-    (pmatch v
-      [(Closure ,env ,x ,b)
-       (let ((x^ (fresh xs x)))
-         (let ((bv (eval-expr `((,x . (N (Nvar ,x^))) . ,env) b)))
-           (let ((b^ (uneval-value `((,x^ . ,xs)) bv)))
-             `(Lam x^ b^))))]
-      [(N ,n) (uneval-neutral xs n)])))
+(define uneval-valueo
+  (lambda (xs v expr)
+    (conde
+      ((fresh (env x b x^ bv b^)
+         (== `(Closure ,env ,x ,b) v)
+         (symbolo x)
+         (symbolo x^)
+         (fresho xs x x^)
+         (eval-expro `((,x . (N (Nvar ,x^))) . ,env) b bv)
+         (uneval-valueo `((,x^ . ,xs)) bv b^)
+         (== `(Lam ,x^ ,b^) expr)))
+      ((fresh (n)
+         (== `(N ,n) v)
+         (uneval-neutralo xs n expr))))))
 
+#|
 (define uneval-neutral
   (lambda (xs n)
     (pmatch n
