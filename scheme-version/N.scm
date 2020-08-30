@@ -69,3 +69,4 @@
           result)))))
 
 (printf "~s\n" (main))
+;; (Closure ((x Closure () x (Var x))) y (Var x))
