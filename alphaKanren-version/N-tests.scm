@@ -67,6 +67,20 @@
       (hash a q)))
   '(_.0))
 
+(test "simple-nominal-4"
+  (run* (q)
+    (exist (e)
+      (fresh (a)
+        (== `(Var ,a) `(Var ,e)))))
+  '(_.0))
+
+(test "simple-nominal-4b"
+  (run* (q)
+    (fresh (a)
+      (exist (e)
+        (== `(Var ,a) `(Var ,e)))))
+  '(_.0))
+
 (test "lookupo-1"
   (run* (q)
     (fresh (a b c)
@@ -128,3 +142,27 @@
   '((((a.0 . _.0) . _.1) _.0)
     ((((_.0 . _.1) (a.0 . _.2) . _.3) _.2) : ((a.0 . _.0)))
     ((((_.0 . _.1) (_.2 . _.3) (a.0 . _.4) . _.5) _.4) : ((a.0 . _.0) (a.0 . _.2)))))
+
+(test "lookup-7"
+  (run* (val)
+    (fresh (a)
+      (lookupo a `((,a . 1)) val)))
+  '(1))
+
+(test "eval-expro-1"
+  (run* (val)
+    (fresh (a)
+      (eval-expro '() `(Var ,a) val)))
+  '())
+
+(test "eval-expro-2"
+  (run* (q)
+    (fresh (a)
+      (eval-expro `((,a . 1)) `(Var ,a) a)))
+  '())
+
+(test "eval-expro-3"
+  (run* (val)
+    (fresh (a)
+      (eval-expro `((,a . 1)) `(Var ,a) val)))
+  '())
