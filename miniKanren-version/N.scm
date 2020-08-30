@@ -83,16 +83,19 @@
          (== `(N ,n) v)
          (uneval-neutralo xs n expr))))))
 
-#|
-(define uneval-neutral
-  (lambda (xs n)
-    (pmatch n
-      [(NVar ,x^) `(Var ,x^)]
-      [(NApp ,n ,v)
-       (let ((ne (uneval-neutral xs n)))
-         (let ((ve (uneval-value xs v)))
-           `(App ,ne ,ve)))])))
+(define uneval-neutralo
+  (lambda (xs n expr)
+    (conde
+      ((fresh (x^)
+         (== `(NVar ,x^) n)
+         (== `(Var ,x^) expr)))
+      ((fresh (n^ v ne ve)
+         (== `(NApp ,n^ ,v) n)         
+         (== `(App ,ne ,ve) expr)
+         (uneval-neutralo xs n^ ne)
+         (uneval-valueo xs v ve))))))
 
+#|
 (define nf
   (lambda (env t)
     (let ((v (eval-expr env t)))
