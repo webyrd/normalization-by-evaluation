@@ -9,6 +9,6 @@ Thank you to Michael Arntzenius for a previous tutorial on normalization-by-eval
 
 Useful tutorials on normalization-by-evaluation:
 
-['Checking Dependent Types with Normalization by Evaluation: A Tutorial' by David Thrane Christiansen][http://www.davidchristiansen.dk/tutorials/nbe/]
+['Checking Dependent Types with Normalization by Evaluation: A Tutorial' by David Thrane Christiansen](http://www.davidchristiansen.dk/tutorials/nbe/)
 
-[Normalization by Evaluation - David Christiansen (PL Wonks)][https://www.youtube.com/watch?v=CpADWJa-f28]
+[Normalization by Evaluation - David Christiansen (PL Wonks)](https://www.youtube.com/watch?v=CpADWJa-f28)
