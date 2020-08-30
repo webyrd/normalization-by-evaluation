@@ -15,6 +15,12 @@
       (== a q)))
   '(a.0))
 
+(test "simple-nominal-3"
+  (run* (q)
+    (fresh (a)
+      (hash a q)))
+  '(_.0))
+
 (test "lookupo-1"
   (run* (q)
     (fresh (a b c)
