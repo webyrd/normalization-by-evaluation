@@ -1,6 +1,20 @@
 (load "N.scm")
 (load "../scheme-helpers/test-macro.scm")
 
+(test "simple-nominal-1"
+  (run* (q)
+    (fresh (a)
+      (exist (x)
+        (== a x)
+        (== q x))))
+  '(a.0))
+
+(test "simple-nominal-2"
+  (run* (q)
+    (fresh (a)
+      (== a q)))
+  '(a.0))
+
 (test "lookupo-1"
   (run* (q)
     (fresh (a b c)
