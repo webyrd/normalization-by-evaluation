@@ -44,7 +44,7 @@
        (let ((x^ (fresh xs x)))
          (let ((bv (eval-expr `((,x . (N (Nvar ,x^))) . ,env) b)))
            (let ((b^ (uneval-value `((,x^ . ,xs)) bv)))
-             `(Lam x^ b^))))]
+             `(Lam ,x^ ,b^))))]
       [(N ,n) (uneval-neutral xs n)])))
 
 (define uneval-neutral
