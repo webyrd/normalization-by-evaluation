@@ -95,12 +95,13 @@
          (uneval-neutralo xs n^ ne)
          (uneval-valueo xs v ve))))))
 
-#|
-(define nf
-  (lambda (env t)
-    (let ((v (eval-expr env t)))
-      (uneval-value '() v))))
+(define nfo
+  (lambda (env t expr)
+    (fresh (v)
+      (eval-expro env t v)
+      (uneval-valueo '() v expr))))
 
+#|
 (define main
   (lambda ()
     (let ((id_ (eval-expr '() '(Lam x (Var x)))))
