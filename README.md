@@ -20,7 +20,8 @@ Code in this repository:
 ##### `alphaKanren-version`
 ###### `N.scm` (Will Byrd's translation of `N.scm` into alphaKanren; tested under Chez Scheme)
 ###### `alphaKanren` (Dan Friedman and Will Byrd's implementation of [alphaKanren](https://github.com/webyrd/alphaKanren))
-
+##### `scheme-helpers` (helper code that might be useful in multiple Scheme-related directories)
+###### `test-macro.scm` (Simple test macro, adapted from Oleg Kislyov's test macro used in the original Kanren)
 
 Useful tutorials on normalization-by-evaluation:
 
