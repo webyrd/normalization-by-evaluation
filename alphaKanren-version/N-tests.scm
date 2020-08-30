@@ -1,6 +1,16 @@
 (load "N.scm")
 (load "../scheme-helpers/test-macro.scm")
 
+;; WEB (fresh (a) (exist (x) (== a x) (hash x a))) signals an error,
+;; since the first arg to `hash` is a nom, even though (fresh (a)
+;; (exist (x) (== a x) (hash a a))) is legal.
+;;
+;; This feels overly restrictive.  Once we unify `x` and `a`, shouldn't
+;; uses of `x` behave like uses of `a`?  Of course,
+;; (fresh (a) (exist (x) (hash x a) (== a x))) should work the same as
+;; (fresh (a) (exist (x) (== a x) (hash x a))).  How does alphaProlog
+;; behave in this case?
+
 (test "simple-nominal-1"
   (run* (q)
     (fresh (a)
