@@ -127,7 +127,7 @@
       (lookupo z env 1)))
   '(((a.0 . 1) . _.0)
     (((_.0 . _.1) (a.0 . 1) . _.2) : ((a.0 . _.0)))
-    (((_.0 . _.1) (_.2 . _.3) (a.0 . 1) . _.4) : ((a.0 . _.0) (a.0 . _.2)))))
+    (((_.0 . _.1) (_.2 . _.3) (a.0 . 1) . _.4) : ((a.0 . _.2) (a.0 . _.0)))))
 
 (test "lookupo-5"
   (run 3 (q)
@@ -137,7 +137,7 @@
         (lookupo z env val))))
   '((((a.0 . _.0) . _.1) _.0)
     ((((_.0 . _.1) (a.0 . _.2) . _.3) _.2) : ((a.0 . _.0)))
-    ((((_.0 . _.1) (_.2 . _.3) (a.0 . _.4) . _.5) _.4) : ((a.0 . _.0) (a.0 . _.2)))))
+    ((((_.0 . _.1) (_.2 . _.3) (a.0 . _.4) . _.5) _.4) : ((a.0 . _.2) (a.0 . _.0)))))
 
 (test "lookupo-5b"
   (run 3 (q)
@@ -147,7 +147,7 @@
         (lookupo z env val))))
   '((((a.0 . _.0) . _.1) _.0)
     ((((_.0 . _.1) (a.0 . _.2) . _.3) _.2) : ((a.0 . _.0)))
-    ((((_.0 . _.1) (_.2 . _.3) (a.0 . _.4) . _.5) _.4) : ((a.0 . _.0) (a.0 . _.2)))))
+    ((((_.0 . _.1) (_.2 . _.3) (a.0 . _.4) . _.5) _.4) : ((a.0 . _.2) (a.0 . _.0)))))
 
 (test "lookupo-6"
   (run 3 (q)
@@ -157,7 +157,7 @@
         (lookupo z env val))))
   '((((a.0 . _.0) . _.1) _.0)
     ((((_.0 . _.1) (a.0 . _.2) . _.3) _.2) : ((a.0 . _.0)))
-    ((((_.0 . _.1) (_.2 . _.3) (a.0 . _.4) . _.5) _.4) : ((a.0 . _.0) (a.0 . _.2)))))
+    ((((_.0 . _.1) (_.2 . _.3) (a.0 . _.4) . _.5) _.4) : ((a.0 . _.2) (a.0 . _.0)))))
 
 (test "lookup-7"
   (run* (val)
@@ -205,10 +205,11 @@
   (run 2 (expr)
     (fresh (a)
       (eval-expro '() expr `(Closure () ,(tie a `(Var ,a))))))
-  '(App (Lam (tie-tag a.0 (Var a.0)))
-        (Lam (tie-tag a.1 (Var a.1)))))
+  '((Lam (tie-tag a.0 (Var a.0)))
+    (App (Lam (tie-tag a.0 (Var a.0)))
+         (Lam (tie-tag a.1 (Var a.1))))))
 
-#| ;; Ugh
+#| ;; Ugh--this test fails if the (hash a y) goal comes before the recursive call in lookupo.
 (test "eval-expro-0h"
   (run 3 (expr)
     (fresh (a)
@@ -217,6 +218,43 @@
 ;; Exception in hash: first argument is not a nom with irritant (susp-tag () #<procedure at alphaKanren.scm:1915>)
 ;; Type (debug) to enter the debugger.
 |#
+
+(test "eval-expro-0i"
+  (run 10 (expr)
+    (fresh (a)
+      (eval-expro '() expr `(Closure () ,(tie a `(Var ,a))))))
+  '((Lam (tie-tag a.0 (Var a.0)))
+    (App (Lam (tie-tag a.0 (Var a.0)))
+         (Lam (tie-tag a.1 (Var a.1))))
+    (App (Lam (tie-tag a.0 (App (Var a.0) (Var a.0))))
+         (Lam (tie-tag a.1 (Var a.1))))
+    (App (Lam (tie-tag a.0 (Var a.0)))
+         (App (Lam (tie-tag a.1 (Var a.1)))
+              (Lam (tie-tag a.2 (Var a.2)))))
+    (App (App (Lam (tie-tag a.0 (Var a.0)))
+              (Lam (tie-tag a.1 (Var a.1))))
+         (Lam (tie-tag a.2 (Var a.2))))
+    (App (Lam (tie-tag
+               a.0
+               (App (Lam (tie-tag a.1 (Var a.1))) (Var a.0))))
+         (Lam (tie-tag a.2 (Var a.2))))
+    (App (Lam (tie-tag a.0 (App (Var a.0) (Var a.0))))
+         (App (Lam (tie-tag a.1 (Var a.1)))
+              (Lam (tie-tag a.2 (Var a.2)))))
+    (App (Lam (tie-tag
+               a.0
+               (App (Lam (tie-tag a.1 (Var a.0))) (Var a.0))))
+         (Lam (tie-tag a.2 (Var a.2))))
+    (App (App (Lam (tie-tag a.0 (Var a.0)))
+              (Lam (tie-tag a.1 (App (Var a.1) (Var a.1)))))
+         (Lam (tie-tag a.2 (Var a.2))))
+    ((App (Lam (tie-tag
+                a.0
+                (App (Lam (tie-tag a.1 (Var a.0)))
+                     (Lam (tie-tag a.2 (susp-tag ((a.3 a.0)) _.0))))))
+          (Lam (tie-tag a.4 (Var a.4))))
+     :
+     ((a.0 . _.0)))))
 
 (test "eval-expro-1"
   (run* (val)
