@@ -11,6 +11,10 @@
          ;; after the call to lookupo, since the first argument to
          ;; hash *must* be a ground (a nom, or a unification variable
          ;; bound to nom).  Perhaps fix this using delayed goals.
+         ;; Thought: with delayed goals, would it be sound to unify
+         ;; the first argument to a hash or tie with a fresh nom, if
+         ;; no other goals are left to be run other than the fresh/nom
+         ;; calls?
          (hash a y) ;; a =/= y
          )))))
 
