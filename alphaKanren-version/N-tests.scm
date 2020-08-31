@@ -195,4 +195,4 @@
   (run* (val)
     (fresh (a)
       (eval-expro `((,a . 1)) `(Var ,a) val)))
-  '())
+  '(1))
