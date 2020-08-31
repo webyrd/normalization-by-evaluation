@@ -4,17 +4,17 @@
 (define lookupo
   (lambda (a env val)
     (exist (y v env^)
-      (== `((,y . ,v) . ,env^) env)
+      (== `((,y . ,v) . ,env^) env) ;; PROBLEM!
       (conde
         ((== a y) (== v val))
-        ((hash a y) ;; a =/= y
+        ((hash a y) ;; a =/= y    PROBLEM!
          (lookupo a env^ val))))))
 
 (define eval-expro
   (lambda (env expr val)
     (conde
       ((exist (x)
-         (== `(Var ,x) expr)
+         (== `(Var ,x) expr) ;; PROBLEM!
          (lookupo x env val)))
       ((exist (e1 e2 f v)
          (== `(App ,e1 ,e2) expr)
