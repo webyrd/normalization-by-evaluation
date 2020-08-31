@@ -273,3 +273,19 @@
     (fresh (a)
       (eval-expro `((,a . 1)) `(Var ,a) val)))
   '(1))
+
+(test "eval-expro-4a"
+  (run* (val)
+    (exist (x)
+      (eval-expro `((,x . 1)) `(Var ,x) val)))
+  '(1))
+
+#|
+(test "eval-expro-4b"
+  (run* (val)
+    (exist (x y)
+      (eval-expro `((,x . 1) (,y . ,2)) `(Var ,x) val)))
+  '(1))
+;; Exception in hash: first argument is not a nom with irritant (susp-tag () #<procedure at alphaKanren.scm:1915>)
+;; Type (debug) to enter the debugger.
+|#
