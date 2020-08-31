@@ -290,6 +290,8 @@
 ;; Type (debug) to enter the debugger.
 |#
 
+;; As long as the initial environment is either empty or has ground
+;; noms for variables, `expr` and `val` can both be fresh)
 (test "eval-expro-5"
   (length (run 500 (q)
             (exist (expr val)
