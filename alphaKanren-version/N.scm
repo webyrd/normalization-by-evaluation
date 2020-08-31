@@ -1,20 +1,19 @@
 (load "alphaKanren/alphaKanren.scm")
 
-;; The first argument to lookupo *must* be a nom.
 (define lookupo
   (lambda (a env val)
     (exist (y v env^)
-      (== `((,y . ,v) . ,env^) env) ;; PROBLEM!
+      (== `((,y . ,v) . ,env^) env)
       (conde
         ((== a y) (== v val))
-        ((hash a y) ;; a =/= y    PROBLEM!
+        ((hash a y) ;; a =/= y
          (lookupo a env^ val))))))
 
 (define eval-expro
   (lambda (env expr val)
     (conde
       ((exist (x)
-         (== `(Var ,x) expr) ;; PROBLEM!
+         (== `(Var ,x) expr)
          (lookupo x env val)))
       ((exist (e1 e2 f v)
          (== `(App ,e1 ,e2) expr)
