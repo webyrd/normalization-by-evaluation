@@ -149,6 +149,10 @@
       (lookupo a `((,a . 1)) val)))
   '(1))
 
+(test "eval-expro-0"
+  (run* (q) (fresh (b) (eval-expro '() `(Lam ,(tie b `(Var ,b)))  q)))
+  '((Closure () a.0 (Var a.0))))
+
 (test "eval-expro-1"
   (run* (val)
     (fresh (a)
