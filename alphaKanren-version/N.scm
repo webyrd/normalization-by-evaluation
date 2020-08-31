@@ -10,7 +10,7 @@
          ;; Non-relational warning!  This call to `hash` should come
          ;; after the call to lookupo, since the first argument to
          ;; hash *must* be a ground (a nom, or a unification variable
-         ;; bound to nom)
+         ;; bound to nom).  Perhaps fix this using delayed goals.
          (hash a y) ;; a =/= y
          )))))
 
