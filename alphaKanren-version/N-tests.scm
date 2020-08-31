@@ -150,8 +150,16 @@
   '(1))
 
 (test "eval-expro-0"
-  (run* (q) (fresh (b) (eval-expro '() `(Lam ,(tie b `(Var ,b)))  q)))
-  '((Closure () a.0 (Var a.0))))
+  (run* (q) (fresh (b) (eval-expro '() `(Lam ,(tie b `(Var ,b))) q)))
+  '((Closure () (tie-tag a.0 (Var a.0)))))
+
+(test "eval-expro-0b"
+  (run* (q)
+    (fresh (b)
+      (eval-expro '() `(Lam ,(tie b `(Var ,b))) q))
+    (fresh (c)
+      (eval-expro '() `(Lam ,(tie c `(Var ,c))) q)))
+  '((Closure () (tie-tag a.0 (Var a.0)))))
 
 (test "eval-expro-1"
   (run* (val)

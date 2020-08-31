@@ -25,7 +25,7 @@
          (exist (body)
            (hash a env)
            (== `(Lam ,(tie a body)) expr)
-           (== `(Closure ,env ,a ,body) val)))))))
+           (== `(Closure ,env ,(tie a body)) val)))))))
 
 #|
 (run 1 (Y)
