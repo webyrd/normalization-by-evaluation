@@ -27,6 +27,17 @@
            (== `(Lam ,(tie a body)) expr)
            (== `(Closure ,env ,(tie a body)) val)))))))
 
+(define apply-expro
+  (lambda (f v val)
+    (conde
+      ((fresh (a)
+         (exist (env body)
+           (== `(Closure ,env ,(tie a body)) f)
+           (eval-expro `((,a . ,v) . ,env) body val))))
+      ((exist (n)
+         (== `(N ,n) f)
+         (== `(N (NApp ,n ,v)) val))))))
+
 #|
 (run 1 (Y)
   (fresh (z f x)
