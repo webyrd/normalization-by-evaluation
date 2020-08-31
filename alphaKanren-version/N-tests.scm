@@ -173,6 +173,12 @@
       (eval-expro '() `(App (Lam ,(tie b `(Lam ,(tie c `(Var ,b))))) (Lam ,(tie d `(Var ,d)))) q)))
   '((Closure ((a.0 Closure () (tie-tag a.1 (Var a.1)))) (tie-tag a.2 (Var a.0)))))
 
+(test "eval-expro-0e"
+  (run* (q)
+    (fresh (b c)
+      (eval-expro '() `(App (Lam ,(tie b `(Var ,b))) (Lam ,(tie c `(Var ,c)))) q)))
+  '((Closure () (tie-tag a.0 (Var a.0)))))
+
 (test "eval-expro-1"
   (run* (val)
     (fresh (a)
