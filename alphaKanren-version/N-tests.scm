@@ -7,26 +7,11 @@
 ;; as described on p. 35 of "Nominal Logic Programming" by Cheney and Urban
 ;; (http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.342.6780)
 ;;
-;; As a result, the first argument to a `hash` constraint *must* be a "nom" ("atom").
-;; The first argument to a `hash` constraint *must not* be a "normal" unification
-;; variable, even if that unification variable has been unified with a nom.
+;; As a result, the first argument to a `hash` constraint *must* be a
+;; ground "nom" ("atom").
 ;;
-;; For example,
 ;;
-;; (fresh (a) (exist (x) (== a x) (hash x a)))
-;;
-;; is illegal and signals an error, since the first argument to `hash` is not a nom, even though
-;;
-;; (fresh (a) (exist (x) (== a x) (hash a a)))
-;;
-;; is legal.
-;;
-;; In other words, unifying the unification variable `x` with the nom `a`, does *not* allow us
-;; to treat `x` as if it were `a`.
-;;
-;; This is a super annoying restriction, and feels very non-miniKanreny.
-;;
-;; As a consolation, at least it is the case that
+;; In the alphaKanren on GitHub,
 ;;
 ;; (fresh (a) (exist (x) (hash x a) (== a x)))
 ;;
@@ -35,6 +20,12 @@
 ;; (fresh (a) (exist (x) (== a x) (hash x a)))
 ;;
 ;; have identical behavior--both signal errors.
+;;
+;; I have changed the alphaKanren code so that `hash` projects its
+;; first argument, making (fresh (a) (exist (x) (== a x) (hash x a)))
+;; legal but (fresh (a) (exist (x) (hash x a) (== a x))) illegal.
+;; This is inherently unrelational.  Is there a way to fix this
+;; behavior?
 ;;
 ;; Has there been any more progress in the nominal unification
 ;; literature in lifting this restriction?
@@ -80,6 +71,26 @@
       (exist (e)
         (== `(Var ,a) `(Var ,e)))))
   '(_.0))
+
+(test "simple-nominal-5"
+  (run* (q)
+    (fresh (a)
+      (exist (e)
+        (== e a)
+        (hash e e))))
+  '())
+
+#|
+(test "simple-nominal-5b"
+  (run* (q)
+    (fresh (a)
+      (exist (e)
+        (hash e e)
+        (== e a))))
+  '())
+;; Exception in hash: first argument is not a nom with irritant (susp-tag () #<procedure at alphaKanren.scm:1915>)
+;; Type (debug) to enter the debugger.
+|#
 
 (test "lookupo-1"
   (run* (q)

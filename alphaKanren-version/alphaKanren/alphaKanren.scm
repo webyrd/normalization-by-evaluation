@@ -311,9 +311,12 @@
 
 (define hash
   (lambda (a t)
-    (begin
-      (unless (nom? a) (error 'hash "first argument is not a nom" a))
-      (unifier unifyhash `((,a . ,t))))))
+    (lambdag@ (p)
+      (mv-let ((sigma nabla) p)
+        (let ((a (apply-subst sigma a)))
+          (begin
+            (unless (nom? a) (error 'hash "first argument is not a nom" a))
+            ((unifier unifyhash `((,a . ,t))) p)))))))
 
 (define-syntax exist
   (syntax-rules ()
@@ -409,7 +412,7 @@
          ((a f) (bind* a g ...)))))))
 
 (define-syntax project
-  (syntax-rules ()                       
+  (syntax-rules ()
     ((_ (x ...) g0 g ...)
      (lambdag@ (p)
        (mv-let ((sigma nabla) p)
