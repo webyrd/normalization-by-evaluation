@@ -289,3 +289,10 @@
 ;; Exception in hash: first argument is not a nom with irritant (susp-tag () #<procedure at alphaKanren.scm:1915>)
 ;; Type (debug) to enter the debugger.
 |#
+
+(test "eval-expro-5"
+  (length (run 500 (q)
+            (exist (expr val)
+              (== (list expr val) q)
+              (eval-expro '() expr val))))
+  500)
