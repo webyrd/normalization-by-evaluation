@@ -27,6 +27,11 @@
 ;; This is inherently unrelational.  Is there a way to fix this
 ;; behavior?
 ;;
+;; See eval-expro-0h for an example of where this behavior isn't
+;; sufficient when running `eval-expro` backwards, resulting in a
+;; run-time error.
+;;
+;;
 ;; Has there been any more progress in the nominal unification
 ;; literature in lifting this restriction?
 ;;
@@ -189,6 +194,29 @@
     (fresh (b c)
       (eval-expro '() `(App (Lam ,(tie b `(Var ,b))) (Lam ,(tie c `(Var ,c)))) q)))
   '((Closure () (tie-tag a.0 (Var a.0)))))
+
+(test "eval-expro-0f"
+  (run 1 (expr)
+    (fresh (a)
+      (eval-expro '() expr `(Closure () ,(tie a `(Var ,a))))))
+  '((Lam (tie-tag a.0 (Var a.0)))))
+
+(test "eval-expro-0g"
+  (run 2 (expr)
+    (fresh (a)
+      (eval-expro '() expr `(Closure () ,(tie a `(Var ,a))))))
+  '(App (Lam (tie-tag a.0 (Var a.0)))
+        (Lam (tie-tag a.1 (Var a.1)))))
+
+#| ;; Ugh
+(test "eval-expro-0h"
+  (run 3 (expr)
+    (fresh (a)
+      (eval-expro '() expr `(Closure () ,(tie a `(Var ,a))))))
+  '???)
+;; Exception in hash: first argument is not a nom with irritant (susp-tag () #<procedure at alphaKanren.scm:1915>)
+;; Type (debug) to enter the debugger.
+|#
 
 (test "eval-expro-1"
   (run* (val)
