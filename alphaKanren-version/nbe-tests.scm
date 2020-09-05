@@ -386,6 +386,17 @@
       (uneval-valueo `(Closure ((,a2 . (Closure () ,(tie a3 `(Var ,a3))))) ,(tie a4 `(Var ,a2))) expr)))
   '((Lam (tie-tag a.0 (Lam (tie-tag a.1 (Var a.1)))))))
 
+#|
+;; We can't run uneval backwards, alas!
+
+(test "uneval-valueo-4"
+  (run 1 (val)
+    (fresh (a)
+      (uneval-valueo val `(Lam ,(tie a `(Var ,a))))))
+  '???)
+;; Exception in hash: first argument is not a nom with irritant (susp-tag () #<procedure at alphaKanren.scm:1915>)
+|#
+
 (test "eval-expro/uneval-valueo-1"
   (run* (result)
     (exist (id_)
