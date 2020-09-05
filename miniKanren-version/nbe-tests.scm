@@ -49,3 +49,50 @@
   (run* (x x^ y) (fresho `(,y) x x^))
   '(((_.0 _.0 _.1) (=/= ((_.0 _.1))) (sym _.0))
     ((_.0 _.1 _.0) (=/= ((_.0 _.1))) (sym _.0 _.1))))
+
+
+
+(test "eval-expro-1"
+  (run* (val)
+    (eval-expro `(Lam z (Var z)) '() val))
+  '((Closure z (Var z) ())))
+
+(test "eval-expro-2"
+  (run* (val)
+    (eval-expro
+     `(App (Lam x (Lam y (Var x)))
+           (Lam z (Var z)))
+     '()
+     val))
+  '((Closure y (Var x) ((x Closure z (Var z) ())))))
+
+;; WEB -- does the nbe handle lexical scope and alpha-equivalence
+;; properly?
+;;
+;; Does the code properly handle things like:
+;;
+;; ((lambda (x) (lambda (x) x)) (lambda (x) x))
+(test "eval-expro/uneval-valueo-2"
+  (run* (result)
+    (fresh (val)
+      (eval-expro
+       `(App (Lam x (Lam y (Var x)))
+             (Lam z (Var z)))
+       '()
+       val)
+      (uneval-valueo '() val result)))
+  '???)
+
+#|
+(test "eval-expro/uneval-valueo-2"
+  (run* (result)
+    (exist (val)
+      (fresh (a b)
+        (eval-expro
+         '()
+         `(App (Lam ,(tie a `(Lam ,(tie b `(Var ,a)))))
+               (Lam ,(tie a `(Var ,a))))
+         val))
+      (uneval-valueo val result)))
+  '((Lam (tie-tag a.0 (Lam (tie-tag a.1 (Var a.1)))))))
+|#
