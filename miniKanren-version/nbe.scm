@@ -13,7 +13,7 @@
          (lookupo x env^ val))))))
 
 (define eval-expro
-  (lambda (env expr val)
+  (lambda (expr env val)
     (conde
       ((fresh (x b)
          (== `(Lam ,x ,b) expr)
@@ -25,8 +25,8 @@
          (lookupo x env val)))
       ((fresh (e1 e2 f v)
          (== `(App ,e1 ,e2) expr)
-         (eval-expro env e1 f)
-         (eval-expro env e2 v)
+         (eval-expro e1 env f)
+         (eval-expro e2 env v)
          (apply-expro f v val))))))
 
 (define apply-expro
@@ -35,7 +35,7 @@
       ((fresh (env x b)
          (== `(Closure ,env ,x ,b) f)
          (symbolo x)
-         (eval-expro `((,x . ,v) . ,env) b val)))
+         (eval-expro b `((,x . ,v) . ,env) val)))
       ((fresh (n)
          (== `(N ,n) f)
          (== `(N (NApp ,n ,v)) val))))))
@@ -78,7 +78,7 @@
          (symbolo x)
          (symbolo x^)
          (fresho xs x x^)
-         (eval-expro `((,x . (N (Nvar ,x^))) . ,env) b bv)
+         (eval-expro b `((,x . (N (Nvar ,x^))) . ,env) bv)
          (uneval-valueo `((,x^ . ,xs)) bv b^)))
       ((fresh (n)
          (== `(N ,n) v)
@@ -99,16 +99,16 @@
 (define nfo
   (lambda (env t expr)
     (fresh (v)
-      (eval-expro env t v)
+      (eval-expro t env v)
       (uneval-valueo '() v expr))))
 
 (define main
   (lambda ()
     (run* (result)
       (fresh (id_ const_)
-        (eval-expro '() '(Lam x (Var x)) id_)
-        (eval-expro '() '(Lam x (Lam y (Var x))) const_)
-        (eval-expro `((id . ,id_) (const . ,const_)) '(App (Var const) (Var id)) result)))))
+        (eval-expro '(Lam x (Var x)) '() id_)
+        (eval-expro '(Lam x (Lam y (Var x))) '() const_)
+        (eval-expro '(App (Var const) (Var id)) `((id . ,id_) (const . ,const_)) result)))))
 
 (printf "~s\n" (main))
 ;; ((Closure ((x Closure () x (Var x))) y (Var x)))
