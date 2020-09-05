@@ -110,5 +110,5 @@
         (eval-expro '(Lam x (Lam y (Var x))) '() const_)
         (eval-expro '(App (Var const) (Var id)) `((id . ,id_) (const . ,const_)) result)))))
 
-(printf "~s\n" (main))
+;; (printf "~s\n" (main))
 ;; ((Closure y (Var x) ((x Closure x (Var x) ()))))
