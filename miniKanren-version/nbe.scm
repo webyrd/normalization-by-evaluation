@@ -4,9 +4,9 @@
 (define lookupo
   (lambda (x env val)
     (fresh (y v env^)
+      (== `((,y . ,v) . ,env^) env)
       (symbolo x)
       (symbolo y)
-      (== `((,y . ,v) . ,env^) env)
       (conde
         ((== x y) (== v val))
         ((=/= x y)
