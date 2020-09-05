@@ -1,8 +1,10 @@
 # normalization-by-evaluation
 
-Normalization-by-evaluation in miniKanren
+Relational normalization-by-evaluation (nbe) in miniKanren/alphaKanren.
 
-Based on a recent conversation with Edward Kmett, and Edward's (non-relational) Haskell code.
+The Scheme, miniKanren, and alphaKanren code is based on Edward Kmett's (non-relational) Haskell code, presented to Will Byrd during a mini-tutorial on nbe.
+
+This repository includes the code from Michael Ballyntyne's 'faster-miniKanren' repo--please see the 'faster-miniKanren/LICENSE' file for the license for that code.  For all other code in this repository, please see the 'LICENSE' file in the top-level directory of this repository.
 
 Thank you to Michael Arntzenius for a previous tutorial on normalization-by-evaluation, and a separate attempt at implementing normalization-by-evaluation relationally.
 
