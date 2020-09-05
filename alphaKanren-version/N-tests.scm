@@ -351,12 +351,14 @@
       (uneval-valueo `(N (NVar ,a)) e)))
   '((Var a.0)))
 
+;; TODO why doesn't this work?
 (test "uneval-valueo-2"
   (run* (expr)
     (fresh (a)
       (uneval-valueo `(Closure () ,(tie a `(Var ,a))) expr)))
   '???)
 
+;; TODO why doesn't this work?
 (test "eval-expro/uneval-valueo-1"
   (run* (result)
     (exist (id_)
