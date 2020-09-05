@@ -76,3 +76,17 @@
     (exist (v)
       (eval-expro env t v)
       (uneval-valueo v expr))))
+
+(define main
+  (lambda ()
+    (run* (result)
+      (exist (id_ const_)
+        (fresh (a)
+          (eval-expro '() `(Lam ,(tie a `(Var ,a))) id_))
+        (fresh (a b)
+          (eval-expro '() `(Lam ,(tie a `(Lam ,(tie b `(Var ,a))))) const_))
+        (fresh (a b)
+          (eval-expro `((,a . ,id_) (,b . ,const_)) `(App (Var ,b) (Var ,a)) result))))))
+
+(printf "~s\n" (main))
+;; ((Closure ((a.0 Closure () (tie-tag a.1 (Var a.1)))) (tie-tag a.2 (Var a.0))))
