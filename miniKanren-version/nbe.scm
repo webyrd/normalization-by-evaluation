@@ -109,9 +109,9 @@
 (define uneval-neutralo
   (lambda (xs n expr)
     (conde
-      ((fresh (x^)
-         (== `(NVar ,x^) n)
-         (== `(Var ,x^) expr)))
+      ((fresh (x)
+         (== `(NVar ,x) n)
+         (== `(Var ,x) expr)))
       ((fresh (n^ v ne ve)
          (== `(NApp ,n^ ,v) n)         
          (== `(App ,ne ,ve) expr)
