@@ -380,6 +380,12 @@
       (uneval-valueo `(Closure () ,(tie a `(Var ,a))) expr)))
   '((Lam (tie-tag a.0 (Var a.0)))))
 
+(test "uneval-valueo-3"
+  (run* (expr)
+    (fresh (a2 a3 a4)
+      (uneval-valueo `(Closure ((,a2 . (Closure () ,(tie a3 `(Var ,a3))))) ,(tie a4 `(Var ,a2))) expr)))
+  '((Lam (tie-tag a.0 (Lam (tie-tag a.1 (Var a.1)))))))
+
 (test "eval-expro/uneval-valueo-1"
   (run* (result)
     (exist (id_)
@@ -387,3 +393,4 @@
         (eval-expro '() `(Lam ,(tie a `(Var ,a))) id_))
       (uneval-valueo id_ result)))
   '((Lam (tie-tag a.0 (Var a.0)))))
+
