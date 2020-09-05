@@ -40,6 +40,11 @@
          (== `(N ,n) f)
          (== `(N (NApp ,n ,v)) val))))))
 
+;;; WEB -- the current definition of `fresho` is unfortunate,
+;;; since it can generate infinitely many duplicate results,
+;;; even in a standard use case.
+;;;
+;;; (see the `fresho` tests in `nbe-tests.scm`)
 (define fresho
   (lambda (xs x x^)
     (fresh ()
