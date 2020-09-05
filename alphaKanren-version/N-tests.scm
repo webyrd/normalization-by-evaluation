@@ -299,6 +299,15 @@
               (eval-expro '() expr val))))
   500)
 
+(test "eval-expro-6"
+  (run* (q)
+    (fresh (a a^)
+      (exist (val)
+        (== (list a a^ val) q)
+        (eval-expro `((,a . (N (NVar ,a^)))) `(Var ,a) val))))
+  '((a.0 a.1 (N (NVar a.1)))))
+
+
 (test "main"
   (run* (result)
     (exist (id_ const_)
@@ -309,3 +318,49 @@
       (fresh (a b)
         (eval-expro `((,a . ,id_) (,b . ,const_)) `(App (Var ,b) (Var ,a)) result))))
   '((Closure ((a.0 Closure () (tie-tag a.1 (Var a.1)))) (tie-tag a.2 (Var a.0)))))
+
+(test "uneval-neutralo-1"
+  (run 1 (q)
+    (exist (n e)
+      (== (list n e) q)
+      (uneval-neutralo n e)))
+  '(((NVar _.0) (Var _.0))))
+
+(test "uneval-neutralo-2"
+  (run 1 (q)
+    (fresh (a)
+      (uneval-neutralo `(NVar ,a) `(Var ,a))))
+  '(_.0))
+
+(test "uneval-neutralo-3"
+  (run 1 (e)
+    (fresh (a)
+      (uneval-valueo `(N (NVar ,a)) e)))
+  '((Var a.0)))
+
+(test "uneval-valueo-1"
+  (run 1 (q)
+    (exist (v e)
+      (== (list v e) q)
+      (uneval-valueo v e)))
+  '(((N (NVar _.0)) (Var _.0))))
+
+(test "uneval-valueo-1b"
+  (run 1 (e)
+    (fresh (a)
+      (uneval-valueo `(N (NVar ,a)) e)))
+  '((Var a.0)))
+
+(test "uneval-valueo-2"
+  (run* (expr)
+    (fresh (a)
+      (uneval-valueo `(Closure () ,(tie a `(Var ,a))) expr)))
+  '???)
+
+(test "eval-expro/uneval-valueo-1"
+  (run* (result)
+    (exist (id_)
+      (fresh (a)
+        (eval-expro '() `(Lam ,(tie a `(Var ,a))) id_))
+      (uneval-valueo id_ result)))
+  '???)
