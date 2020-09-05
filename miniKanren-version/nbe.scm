@@ -119,7 +119,7 @@
          (uneval-valueo xs v ve))))))
 
 (define nfo
-  (lambda (env t expr)
+  (lambda (t env expr)
     (fresh (v)
       (eval-expro t env v)
       (uneval-valueo '() v expr))))
