@@ -13,6 +13,14 @@
   (run* (x) (membero x `(,x)))
   '(_.0))
 
+(test "membero-2"
+  (run* (x) (membero x '()))
+  '())
+
+(test "membero-3"
+  (run* (x y) (membero x `(,y)))
+  '((_.0 _.0)))
+
 (test "not-membero-1"
   (run* (x) (not-membero x `(,x)))
   '())
@@ -20,6 +28,10 @@
 (test "non-membero-2"
   (run* (x y) (not-membero x `(,y)))
   '(((_.0 _.1) (=/= ((_.0 _.1))))))
+
+(test "not-membero-3"
+  (run* (x) (not-membero x '()))
+  '(_.0))
 
 (test "fresho-1"
   (run* (x x^) (fresho `() x x^))
