@@ -40,7 +40,25 @@
          (== `(N ,n) f)
          (== `(N (NApp ,n ,v)) val))))))
 
-;;; WEB -- the current definition of `fresho` is unfortunate,
+;;; WEB -- non-recursive definition of `fresho`.
+;;;
+;;; Doesn't this work?  Am I missing something important?
+(define fresho
+  (lambda (xs x x^)
+    (fresh ()
+      (symbolo x)
+      (symbolo x^)
+      (conde
+        ((membero x xs)
+         (fresh (x^^)
+           (symbolo x^^)
+           (== x^ x^^)
+           (not-membero x^^ `(,x . ,xs))))
+        ((== x x^)
+         (not-membero x xs))))))
+
+#|
+;;; WEB -- this naive recursive definition of `fresho` is unfortunate,
 ;;; since it can generate infinitely many duplicate results,
 ;;; even in a standard use case.
 ;;;
@@ -56,6 +74,7 @@
            (fresho xs x^^ x^)))
         ((== x x^)
          (not-membero x xs))))))
+|#
 
 (define membero
   (lambda (x ls)
