@@ -15,9 +15,9 @@
 (define eval-expro
   (lambda (expr env val)
     (conde
-      ((fresh (x b)
-         (== `(Lam ,x ,b) expr)
-         (== `(Closure ,env ,x ,b) val)
+      ((fresh (x body)
+         (== `(Lam ,x ,body) expr)
+         (== `(Closure ,x ,body ,env) val)
          (symbolo x)))
       ((fresh (x)
          (== `(Var ,x) expr)
@@ -32,10 +32,10 @@
 (define apply-expro
   (lambda (f v val)
     (conde
-      ((fresh (env x b)
-         (== `(Closure ,env ,x ,b) f)
+      ((fresh (x body env)
+         (== `(Closure ,x ,body ,env) f)
          (symbolo x)
-         (eval-expro b `((,x . ,v) . ,env) val)))
+         (eval-expro body `((,x . ,v) . ,env) val)))
       ((fresh (n)
          (== `(N ,n) f)
          (== `(N (NApp ,n ,v)) val))))))
@@ -72,13 +72,13 @@
 (define uneval-valueo
   (lambda (xs v expr)
     (conde
-      ((fresh (env x b x^ bv b^)
-         (== `(Closure ,env ,x ,b) v)
+      ((fresh (env x body x^ bv b^)
+         (== `(Closure ,x ,body ,env) v)
          (== `(Lam ,x^ ,b^) expr)
          (symbolo x)
          (symbolo x^)
          (fresho xs x x^)
-         (eval-expro b `((,x . (N (Nvar ,x^))) . ,env) bv)
+         (eval-expro body `((,x . (N (Nvar ,x^))) . ,env) bv)
          (uneval-valueo `((,x^ . ,xs)) bv b^)))
       ((fresh (n)
          (== `(N ,n) v)
@@ -111,4 +111,4 @@
         (eval-expro '(App (Var const) (Var id)) `((id . ,id_) (const . ,const_)) result)))))
 
 (printf "~s\n" (main))
-;; ((Closure ((x Closure () x (Var x))) y (Var x)))
+;; ((Closure y (Var x) ((x Closure x (Var x) ()))))
