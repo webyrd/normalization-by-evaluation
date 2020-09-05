@@ -34,7 +34,7 @@
   '(_.0))
 
 (test "fresho-1"
-  (run* (x x^) (fresho `() x x^))
+  (run* (x x^) (fresho '() x x^))
   '(((_.0 _.0) (sym _.0))))
 
 (test "fresho-2"
@@ -46,6 +46,9 @@
   '(((_.0 _.1) (=/= ((_.0 _.1))) (sym _.0 _.1))
     ((_.0 _.1) (=/= ((_.0 _.1))) (sym _.0 _.1))))
 
+;;; WEB -- the current definition of `fresho` is unfortunate,
+;;; since it can generate infinitely many duplicate results,
+;;; even in a standard use case.
 (test "fresho-4"
   (run 3 (x x^) (fresho `(,x) x x^))
   '(((_.0 _.1) (=/= ((_.0 _.1))) (sym _.0 _.1))
