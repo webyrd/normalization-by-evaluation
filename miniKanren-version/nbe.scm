@@ -55,7 +55,7 @@
 (define membero
   (lambda (x ls)
     (fresh (y ls^)
-      (== `((,y . ,ls^)) ls)
+      (== `(,y . ,ls^) ls)
       (conde
         ((== x y))
         ((=/= x y) (membero x ls^))))))
@@ -65,7 +65,7 @@
     (conde
       ((== '() ls))
       ((fresh (y ls^)
-         (== `((,y . ,ls^)) ls)
+         (== `(,y . ,ls^) ls)
          (=/= x y)
          (not-membero x ls^))))))
 
