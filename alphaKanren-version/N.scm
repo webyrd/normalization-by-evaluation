@@ -88,5 +88,5 @@
         (fresh (a b)
           (eval-expro `((,a . ,id_) (,b . ,const_)) `(App (Var ,b) (Var ,a)) result))))))
 
-(printf "~s\n" (main))
+;; (printf "~s\n" (main))
 ;; ((Closure ((a.0 Closure () (tie-tag a.1 (Var a.1)))) (tie-tag a.2 (Var a.0))))
