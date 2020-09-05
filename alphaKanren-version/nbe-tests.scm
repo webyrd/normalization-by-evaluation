@@ -394,3 +394,21 @@
       (uneval-valueo id_ result)))
   '((Lam (tie-tag a.0 (Var a.0)))))
 
+;; WEB -- an important test!  Note the run*.
+;;
+;; If we just ran an `evalo`-like interpreter backwards to get the
+;; original expression, given a closure, we would get infinitely many
+;; values (including the application that we started from), rather
+;; than a single normal form.
+(test "eval-expro/uneval-valueo-2"
+  (run* (result)
+    (exist (val)
+      (fresh (a b)
+        (eval-expro
+         '()
+         `(App (Lam ,(tie a `(Lam ,(tie b `(Var ,a)))))
+               (Lam ,(tie a `(Var ,a))))
+         val))
+      (uneval-valueo val result)))
+  '((Lam (tie-tag a.0 (Lam (tie-tag a.1 (Var a.1)))))))
+
