@@ -8,6 +8,8 @@ This repository includes the code from Michael Ballyntyne's 'faster-miniKanren' 
 
 Thank you to Michael Arntzenius for a previous tutorial on normalization-by-evaluation, and a separate attempt at implementing normalization-by-evaluation relationally.
 
+Thanks to Nada Amin for suggesting improved file names.
+
 Code in this repository:
 
 ##### `original-edward-kmett-code`
