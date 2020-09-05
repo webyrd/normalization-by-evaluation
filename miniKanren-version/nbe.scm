@@ -49,13 +49,11 @@
       (symbolo x)
       (symbolo x^)
       (conde
-        ((membero x xs)
-         (fresh (x^^)
-           (symbolo x^^)
-           (== x^ x^^)
-           (not-membero x^^ `(,x . ,xs))))
         ((== x x^)
-         (not-membero x xs))))))
+         (not-membero x xs))
+        ((=/= x x^)
+         (membero x xs)
+         (not-membero x^ xs))))))
 
 #|
 ;;; WEB -- this naive recursive definition of `fresho` is unfortunate,
