@@ -22,23 +22,19 @@
   '(((_.0 _.1) (=/= ((_.0 _.1))))))
 
 (test "fresho-1"
-  (run 1 (x x^) (fresho `(,x) x x^))
-  '(((_.0 _.1) (=/= ((_.0 _.1))) (sym _.0 _.1))))
-
-(test "fresho-2"
-  (run 1 (x x^) (fresho `() x x^))
-  '(((_.0 _.0) (sym _.0))))
-
-(test "fresho-3"
   (run* (x x^) (fresho `() x x^))
   '(((_.0 _.0) (sym _.0))))
 
-(test "fresho-4"
+(test "fresho-2"
+  (run 1 (x x^) (fresho `(,x) x x^))
+  '(((_.0 _.1) (=/= ((_.0 _.1))) (sym _.0 _.1))))
+
+(test "fresho-3"
   (run 2 (x x^) (fresho `(,x) x x^))
   '(((_.0 _.1) (=/= ((_.0 _.1))) (sym _.0 _.1))
     ((_.0 _.1) (=/= ((_.0 _.1))) (sym _.0 _.1))))
 
-(test "fresho-5"
+(test "fresho-4"
   (run 3 (x x^) (fresho `(,x) x x^))
   '(((_.0 _.1) (=/= ((_.0 _.1))) (sym _.0 _.1))
     ((_.0 _.1) (=/= ((_.0 _.1))) (sym _.0 _.1))
