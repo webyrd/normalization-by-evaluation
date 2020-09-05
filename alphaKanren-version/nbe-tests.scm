@@ -1,4 +1,4 @@
-(load "N.scm")
+(load "nbe.scm")
 (load "../scheme-helpers/test-macro.scm")
 
 ;; WEB comment:
@@ -317,6 +317,18 @@
         (== (list a a^ val) q)
         (eval-expro `((,a . (N (NVar ,a^)))) `(Var ,a) val))))
   '((a.0 a.1 (N (NVar a.1)))))
+
+(test "eval-expro-7"
+  (run* (q)
+    (fresh (a b)
+      (exist (val)
+        (== (list a b val) q)
+        (eval-expro
+         '()
+         `(App (Lam ,(tie a `(Lam ,(tie b `(Var ,a)))))
+               (Lam ,(tie a `(Var ,a))))
+         val))))
+  '((a.0 a.1 (Closure ((a.2 Closure () (tie-tag a.3 (Var a.3)))) (tie-tag a.4 (Var a.2))))))
 
 
 (test "main"
