@@ -94,14 +94,14 @@
 (define uneval-valueo
   (lambda (xs v expr)
     (conde
-      ((fresh (env x body x^ bv b^)
+      ((fresh (env x body x^ bv body^)
          (== `(Closure ,x ,body ,env) v)
-         (== `(Lam ,x^ ,b^) expr)
+         (== `(Lam ,x^ ,body^) expr)
          (symbolo x)
          (symbolo x^)
          (fresho xs x x^)
          (eval-expro body `((,x . (N (Nvar ,x^))) . ,env) bv)
-         (uneval-valueo `((,x^ . ,xs)) bv b^)))
+         (uneval-valueo `((,x^ . ,xs)) bv body^)))
       ((fresh (n)
          (== `(N ,n) v)
          (uneval-neutralo xs n expr))))))
