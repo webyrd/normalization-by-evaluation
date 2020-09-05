@@ -70,3 +70,9 @@
          (== `(App ,ne ,ve) expr)
          (uneval-neutralo n^ ne)
          (uneval-valueo v ve))))))
+
+(define nfo
+  (lambda (env t expr)
+    (exist (v)
+      (eval-expro env t v)
+      (uneval-valueo v expr))))
