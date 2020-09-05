@@ -97,6 +97,17 @@
 ;; Type (debug) to enter the debugger.
 |#
 
+(test "simple-nominal-6"
+  (run* (q)
+    (fresh (a)
+      (exist (e)
+        (== (tie a e) q)))
+    (exist (e)
+      (fresh (a)
+        (== (tie a e) q))))
+  '((tie-tag a.0 _.0)))
+
+
 (test "lookupo-1"
   (run* (q)
     (fresh (a b c)
