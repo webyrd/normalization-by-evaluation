@@ -45,3 +45,16 @@
       ((exist (n)
          (== `(N ,n) f)
          (== `(N (NApp ,n ,v)) val))))))
+
+(define uneval-valueo
+  (lambda (v expr)
+    (conde
+      ((fresh (a a^)
+         (exist (env body body^ bv)
+           (== `(Closure ,env ,(tie a body)) v)
+           (== `(Lam ,(tie a^ body^)) expr)
+           (eval-expro `((,a . (N (Nvar ,a^))) . ,env) body bv)
+           (uneval-valueo bv body^))))
+      ((exist (n)
+         (== `(N ,n) v)
+         (uneval-neutralo n expr))))))
