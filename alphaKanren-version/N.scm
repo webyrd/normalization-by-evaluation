@@ -58,3 +58,15 @@
       ((exist (n)
          (== `(N ,n) v)
          (uneval-neutralo n expr))))))
+
+(define uneval-neutralo
+  (lambda (n expr)
+    (conde
+      ((fresh (a)
+         (== `(NVar ,a) n)
+         (== `(Var ,a) expr)))
+      ((exist (n^ v ne ve)
+         (== `(NApp ,n^ ,v) n)         
+         (== `(App ,ne ,ve) expr)
+         (uneval-neutralo n^ ne)
+         (uneval-valueo v ve))))))
