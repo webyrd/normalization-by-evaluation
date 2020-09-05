@@ -66,6 +66,35 @@
      val))
   '((Closure y (Var x) ((x Closure z (Var z) ())))))
 
+(test "uneval-valueo-0"
+  (run 6 (val expr)
+    (uneval-valueo '() val expr))
+  '(((N (NVar _.0))
+     (Var _.0))
+    ((N (NApp (NVar _.0) (N (NVar _.1))))
+     (App (Var _.0) (Var _.1)))
+    (((Closure _.0 (Var _.1) ((_.1 N (NVar _.2)) . _.3))
+      (Lam _.0 (Var _.2)))
+     (=/= ((_.0 _.1)))
+     (sym _.0 _.1))
+    ((N (NApp (NApp (NVar _.0) (N (NVar _.1))) (N (NVar _.2))))
+     (App (App (Var _.0) (Var _.1)) (Var _.2)))
+    ((N (NApp (NVar _.0) (N (NApp (NVar _.1) (N (NVar _.2))))))
+     (App (Var _.0) (App (Var _.1) (Var _.2))))
+    (((Closure _.0 (Var _.1) ((_.2 . _.3) (_.1 N (NVar _.4)) . _.5))
+      (Lam _.0 (Var _.4)))
+     (=/= ((_.0 _.1)) ((_.1 _.2)))
+     (sym _.0 _.1 _.2))))
+
+;; WEB TODO why doesn't this work?
+(test "uneval-valueo-1"
+  (run* (expr)
+    (uneval-valueo '() expr '(Closure y (Var x) ((x Closure z (Var z) ())))))
+  '???)
+
+
+;; WEB TODO why doesn't this work?
+;;
 ;; WEB -- does the nbe handle lexical scope and alpha-equivalence
 ;; properly?
 ;;
