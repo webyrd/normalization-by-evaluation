@@ -23,11 +23,11 @@
          (== `(Var ,x) expr)
          (symbolo x)
          (lookupo x env val)))
-      ((fresh (e1 e2 proc arg)
+      ((fresh (e1 e2 f v)
          (== `(App ,e1 ,e2) expr)
-         (eval-expro env e1 proc)
-         (eval-expro env e2 arg)
-         (apply-expro proc arg val))))))
+         (eval-expro env e1 f)
+         (eval-expro env e2 v)
+         (apply-expro f v val))))))
 
 (define apply-expro
   (lambda (f v val)
