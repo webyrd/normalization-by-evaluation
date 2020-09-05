@@ -15,6 +15,10 @@
 (define eval-expro
   (lambda (env expr val)
     (conde
+      ((fresh (x b)
+         (== `(Lam ,x ,b) expr)
+         (== `(Closure ,env ,x ,b) val)
+         (symbolo x)))
       ((fresh (x)
          (== `(Var ,x) expr)
          (symbolo x)
@@ -23,11 +27,7 @@
          (== `(App ,f ,x) expr)
          (eval-expro env f vf)
          (eval-expro env x vx)
-         (apply-expro vf vx val)))
-      ((fresh (x b)
-         (== `(Lam ,x ,b) expr)
-         (symbolo x)
-         (== `(Closure ,env ,x ,b) val))))))
+         (apply-expro vf vx val))))))
 
 (define apply-expro
   (lambda (f v val)
