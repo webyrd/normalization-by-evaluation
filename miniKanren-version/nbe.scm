@@ -94,7 +94,7 @@
 (define uneval-valueo
   (lambda (xs v expr)
     (conde
-      ((fresh (env x body x^ bv body^)
+      ((fresh (x body env x^ body^ bv)
          (== `(Closure ,x ,body ,env) v)
          (== `(Lam ,x^ ,body^) expr)
          (symbolo x)
