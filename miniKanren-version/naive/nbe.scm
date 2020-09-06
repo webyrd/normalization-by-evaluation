@@ -1,5 +1,5 @@
-(load "faster-miniKanren/mk-vicare.scm")
-(load "faster-miniKanren/mk.scm")
+(load "../faster-miniKanren/mk-vicare.scm")
+(load "../faster-miniKanren/mk.scm")
 
 (define lookupo
   (lambda (x env val)

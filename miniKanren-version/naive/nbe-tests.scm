@@ -1,5 +1,5 @@
 (load "nbe.scm")
-(load "../scheme-helpers/test-macro.scm")
+(load "../../scheme-helpers/test-macro.scm")
 
 (test "main"
   (run* (result)
