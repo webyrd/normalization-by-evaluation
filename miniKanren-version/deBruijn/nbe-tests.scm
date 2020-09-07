@@ -38,6 +38,11 @@
     (minuso '(s (s (s (s (s z))))) '(s (s (s z))) q))
   '((s (s z))))
 
+(test "minuso-2"
+  (run* (q)
+    (minuso '(s (s (s z))) q '(s (s (s (s (s z)))))))
+  '())
+
 (test "evalo-1"
   (run* (q) (evalo '() '(Lam (Var z)) q))
   '((Clo () (Var z))))
@@ -197,7 +202,7 @@
      (Lam (Lam (Lam (Var z)))))))
 
 #|
-;;; WEB -- claim that this should diverge!
+;;; WEB -- I claim that this should diverge!
 (test "nfo-6"
   (run 1 (e1 e2 ne e)
     (=/= e1 e2)
@@ -210,10 +215,26 @@
 |#
 
 (test "nfo-6"
+  (run 1 (v1 v2 n1 n2 e)
+    (=/= v1 v2)
+    (fresh (e^)
+      (== `(App . ,e^) e))
+    (unevalo n1 v1 e)
+    (unevalo n2 v2 e))
+  '(((N (Napp (NVar z) (NVar z)))
+     (N (Napp (NVar (s z)) (NVar (s z))))
+     (s _.0)
+     (s (s _.0))
+     (App (Var _.0) (Var _.0)))))
+
+#|
+;;; WEB -- I claim that this should diverge!
+(test "nfo-7"
   (run 1 (v1 v2 e)
     (=/= v1 v2)
     (fresh (e^)
       (== `(App . ,e^) e))
-    (unevalo 'z '() v1 e)
-    (unevalo 'z '() v2 e))
+    (unevalo 'z v1 e)
+    (unevalo 'z v2 e))
   '???)
+|#
