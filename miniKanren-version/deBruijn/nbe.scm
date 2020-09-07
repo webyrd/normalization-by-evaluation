@@ -25,12 +25,12 @@
          (== `(App ,f ,x) expr)
          ;;; WEB -- Since we know `fv` will be applied, we can try to
          ;;; fail fast by ensuring `fv` is either of the form
-         ;;; `(N ,n) or `(Clo ,env ,body).
+         ;;; `(N ,n) or `(Clo ,env^ ,body).
          (conde
            ((fresh (n)
               (== `(N ,n) fv)))
-           ((fresh (env body)
-              (== `(Clo ,env ,body) fv))))
+           ((fresh (env^ body)
+              (== `(Clo ,env^ ,body) fv))))
          ;;;
          (evalo env f fv)
          (evalo env x xv)
