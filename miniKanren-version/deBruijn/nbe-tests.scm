@@ -43,6 +43,19 @@
     (minuso '(s (s (s z))) q '(s (s (s (s (s z)))))))
   '())
 
+(test "minuso-3"
+  (run 3 (n)
+    (minuso n n 'z))
+  '(z (s z) (s (s z))))
+
+#|
+;;; WEB - diverges instead of fails, alas
+(test "minuso-4"
+  (run 1 (n n2)
+    (minuso n n '(s ,n2)))
+  '???)
+|#
+
 (test "evalo-1"
   (run* (q) (evalo '() '(Lam (Var z)) q))
   '((Clo () (Var z))))
