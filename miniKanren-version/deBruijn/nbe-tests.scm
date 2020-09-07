@@ -252,6 +252,13 @@
   '???)
 |#
 
+(test "appo-0"
+  (run 3 (f v  val)
+    (appo f v val))
+  '(((N _.0) _.1 (N (NApp _.0 _.1)))
+    ((Clo _.0 (Lam _.1)) _.2 (Clo (_.2 . _.0) _.1))
+    ((Clo _.0 (Var z)) _.1 _.1)))
+
 (test "appo-1"
   (run 1 (f v)
     (appo f v '(Clo () (Var z))))
