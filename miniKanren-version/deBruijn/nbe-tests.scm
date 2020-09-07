@@ -251,3 +251,21 @@
     (unevalo 'z v2 e))
   '???)
 |#
+
+(test "appo-1"
+  (run 1 (f v)
+    (appo f v '(Clo () (Var z))))
+  '(((Clo _.0 (Var z)) (Clo () (Var z)))))
+
+(test "appo-2"
+  (run 3 (f v n)
+    (appo f v `(N (NApp ,n ,v))))
+  '(((N _.0) _.1 _.0)
+    ((Clo ((N (NApp _.0 _.1)) . _.2) (Var (s z))) _.1 _.0)
+    ((Clo (_.0 (N (NApp _.1 _.2)) . _.3) (Var (s (s z)))) _.2 _.1)))
+
+(test "appo-3"
+  (run* (f v n val)
+    (== `(N ,n) f)
+    (appo f v val))
+  '(((N _.0) _.1 _.0 (N (NApp _.0 _.1)))))
