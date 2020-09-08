@@ -27,6 +27,14 @@
   (parse '(lambda (a) (lambda (b) b)))
   '(Lam (Lam (Var z))))
 
+(test "parse-2"
+  (parse '(lambda (a) (lambda (a) a)))
+  '(Lam (Lam (Var z))))
+
+(test "parse-3"
+  (parse '((lambda (z) (lambda (z) (lambda (z) z))) (lambda (z) z)))
+  '(App (Lam (Lam (Lam (Var z)))) (Lam (Var z))))
+
 
 (test "ntho-1"
   (run* (q) (ntho 'z '() q))

@@ -102,9 +102,9 @@
               (lambda (expr env)
                 (pmatch expr
                   (,x (guard (symbol? x))
-                   (let ((v (member x (reverse env))))
+                   (let ((v (member x env)))
                      (unless v (error 'parse "parser only handles closed terms"))
-                     (let ((n (sub1 (length v))))
+                     (let ((n (- (length env) (length v))))
                        (let ((pn (peano n)))
                          `(Var ,pn)))))
                   ((lambda (,x) ,body)
