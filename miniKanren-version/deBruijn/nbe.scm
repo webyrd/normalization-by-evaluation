@@ -23,19 +23,23 @@
          (ntho x env val)))
       ((fresh (f x fv xv)
          (== `(App ,f ,x) expr)
-         ;;; WEB -- Since we know `fv` will be applied, we can try to
-         ;;; fail fast by ensuring `fv` is either of the form
-         ;;; `(N ,n) or `(Clo ,env^ ,body).
+         ;; WEB -- inlined `appo`, and distributed `evalo` calls, to try to fail-fast
          (conde
            ((fresh (n)
-              (== `(N ,n) fv)))
+              (== `(N ,n) fv)
+              (== `(N (NApp ,n ,xv)) val)
+              (evalo env f fv)
+              (evalo env x xv)))
            ((fresh (env^ body)
-              (== `(Clo ,env^ ,body) fv))))
-         ;;;
-         (evalo env f fv)
-         (evalo env x xv)
-         (appo fv xv val))))))
+              (== `(Clo ,env^ ,body) fv)
+              (evalo env f fv)
+              (evalo env x xv)
+              (evalo `(,xv . ,env^) body val))))
+         ;;
+         )))))
 
+#|
+;;; WEB -- Original `appo` definition
 (define appo
   (lambda (f v val)
     (conde
@@ -45,6 +49,7 @@
       ((fresh (env body)
          (== `(Clo ,env ,body) f)
          (evalo `(,v . ,env) body val))))))
+|#
 
 (define unevalo
   (lambda (d val expr)
