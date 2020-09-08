@@ -1,4 +1,4 @@
-(load "pmatch.scm")
+(load "../scheme-helpers/pmatch.scm")
 
 ;; just to be safe
 (define eval 'eval-undefined)

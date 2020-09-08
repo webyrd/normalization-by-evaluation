@@ -1,6 +1,33 @@
 (load "nbe.scm")
 (load "../../scheme-helpers/test-macro.scm")
 
+
+(test "peano-0"
+  (peano 0)
+  'z)
+
+(test "peano-1"
+  (peano 1)
+  '(s z))
+
+(test "peano-2"
+  (peano 2)
+  '(s (s z)))
+
+(test "peano-5"
+  (peano 5)
+  '(s (s (s (s (s z))))))
+
+
+(test "parse-0"
+  (parse '((lambda (x) (lambda (y) (lambda (z) z))) (lambda (w) w)))
+  '(App (Lam (Lam (Lam (Var z)))) (Lam (Var z))))
+
+(test "parse-1"
+  (parse '(lambda (a) (lambda (b) b)))
+  '(Lam (Lam (Var z))))
+
+
 (test "ntho-1"
   (run* (q) (ntho 'z '() q))
   '())
@@ -33,6 +60,7 @@
   (run* (q) (ntho '(s (s z)) q 31))
   '((_.0 _.1 31 . _.2)))
 
+
 (test "minuso-1"
   (run* (q)
     (minuso '(s (s (s (s (s z))))) '(s (s (s z))) q))
@@ -56,6 +84,7 @@
   '???)
 |#
 
+
 (test "evalo-1"
   (run* (q) (evalo '() '(Lam (Var z)) q))
   '((Clo () (Var z))))
@@ -75,6 +104,7 @@
 (test "evalo-5"
   (run* (q) (evalo '() '(App (Lam (Var z)) (Lam (Var z))) q))
   '((Clo () (Var z))))
+
 
 (test "unevalo-1"
   (run* (q) (unevalo 'z '(Clo () (Var z)) q))
@@ -104,6 +134,7 @@
     (unevalo 'z v2 e))
   '???)
 |#
+
 
 (test "nfo-1"
   (run 10 (q) (nfo '() q '(Lam (Var z))))
@@ -260,6 +291,18 @@
   (run* (nf1 nf2)
     (nfo '() '(App (Lam (Lam (Lam (Var z)))) (Lam (Var z))) nf1)
     (nfo '() '(Lam (Lam (Var z))) nf2))
+  '(((Lam (Lam (Var z))) (Lam (Lam (Var z)))))
+  )
+
+(test "nfo-9"
+  ;; Show these two expressions have the same normal form:
+  ;;
+  ;; ((lambda (x) (lambda (y) (lambda (z) z))) (lambda (w) w))
+  ;; (lambda (a) (lambda (b) b))
+  ;;
+  (run* (nf1 nf2)
+    (nfo '() (parse '((lambda (x) (lambda (y) (lambda (z) z))) (lambda (w) w))) nf1)
+    (nfo '() (parse '(lambda (a) (lambda (b) b))) nf2))
   '(((Lam (Lam (Var z))) (Lam (Lam (Var z)))))
   )
 

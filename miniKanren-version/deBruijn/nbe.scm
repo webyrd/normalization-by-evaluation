@@ -1,5 +1,6 @@
 (load "../faster-miniKanren/mk-vicare.scm")
 (load "../faster-miniKanren/mk.scm")
+(load "../../scheme-helpers/pmatch.scm")
 
 (define ntho
   (lambda (n xs val)
@@ -91,6 +92,33 @@
     (fresh (v)
       (evalo env expr v)
       (unevalo 'z v expr^))))
+
+
+
+;;; `parse` only handles closed terms.
+(define parse
+  (lambda (expr)
+    (letrec ((parse
+              (lambda (expr env)
+                (pmatch expr
+                  (,x (guard (symbol? x))
+                   (let ((v (member x (reverse env))))
+                     (unless v (error 'parse "parser only handles closed terms"))
+                     (let ((n (sub1 (length v))))
+                       (let ((pn (peano n)))
+                         `(Var ,pn)))))
+                  ((lambda (,x) ,body)
+                   `(Lam ,(parse body `(,x . ,env))))
+                  ((,e1 ,e2)
+                   `(App ,(parse e1 env) ,(parse e2 env)))))))
+      (parse expr '()))))
+
+;; `peano` assumes `n` is non-negative
+(define peano
+  (lambda (n)
+    (cond
+      ((zero? n) 'z)
+      (else `(s ,(peano (sub1 n)))))))
 
 (define main
   (lambda ()
