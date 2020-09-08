@@ -80,6 +80,31 @@
   (run* (q) (unevalo 'z '(Clo () (Var z)) q))
   '((Lam (Var z))))
 
+(test "unevalo-2"
+  (run 1 (v1 v2 n1 n2 e)
+    (=/= v1 v2)
+    (fresh (e^)
+      (== `(App . ,e^) e))
+    (unevalo n1 v1 e)
+    (unevalo n2 v2 e))
+  '(((N (Napp (NVar z) (NVar z)))
+     (N (Napp (NVar (s z)) (NVar (s z))))
+     (s _.0)
+     (s (s _.0))
+     (App (Var _.0) (Var _.0)))))
+
+#|
+;;; WEB -- I claim that this should diverge!
+(test "unevalo-3"
+  (run 1 (v1 v2 e)
+    (=/= v1 v2)
+    (fresh (e^)
+      (== `(App . ,e^) e))
+    (unevalo 'z v1 e)
+    (unevalo 'z v2 e))
+  '???)
+|#
+
 (test "nfo-1"
   (run 10 (q) (nfo '() q '(Lam (Var z))))
   '((Lam (Var z))
@@ -225,30 +250,6 @@
   '???)
 |#
 
-(test "nfo-6"
-  (run 1 (v1 v2 n1 n2 e)
-    (=/= v1 v2)
-    (fresh (e^)
-      (== `(App . ,e^) e))
-    (unevalo n1 v1 e)
-    (unevalo n2 v2 e))
-  '(((N (Napp (NVar z) (NVar z)))
-     (N (Napp (NVar (s z)) (NVar (s z))))
-     (s _.0)
-     (s (s _.0))
-     (App (Var _.0) (Var _.0)))))
-
-#|
-;;; WEB -- I claim that this should diverge!
-(test "nfo-7"
-  (run 1 (v1 v2 e)
-    (=/= v1 v2)
-    (fresh (e^)
-      (== `(App . ,e^) e))
-    (unevalo 'z v1 e)
-    (unevalo 'z v2 e))
-  '???)
-|#
 
 (test "nfo-8"
   ;; Show these two expressions have the same normal form:
@@ -261,6 +262,7 @@
     (nfo 'z '(Lam (Lam (Var z))) nf2))
   '(((Lam (Lam (Var z))) (Lam (Lam (Var z)))))
   )
+
 
 #|
 ;;; WEB -- these tests no longer run, since I inlined `appo` in `evalo`.
