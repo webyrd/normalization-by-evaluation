@@ -250,6 +250,18 @@
   '???)
 |#
 
+(test "nfo-8"
+  ;; Show these two expressions have the same normal form:
+  ;;
+  ;; ((lambda (x) (lambda (y) (lambda (z) z))) (lambda (w) w))
+  ;; (lambda (a) (lambda (b) b))
+  ;;
+  (run* (nf1 nf2)
+    (nfo 'z '(App (Lam (Lam (Lam (Var z)))) (Lam (Var z))) nf1)
+    (nfo 'z '(Lam (Lam (Var z))) nf2))
+  '(((Lam (Lam (Var z))) (Lam (Lam (Var z)))))
+  )
+
 #|
 ;;; WEB -- these tests no longer run, since I inlined `appo` in `evalo`.
 (test "appo-0"
