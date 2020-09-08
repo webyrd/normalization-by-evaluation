@@ -258,8 +258,8 @@
   ;; (lambda (a) (lambda (b) b))
   ;;
   (run* (nf1 nf2)
-    (nfo 'z '(App (Lam (Lam (Lam (Var z)))) (Lam (Var z))) nf1)
-    (nfo 'z '(Lam (Lam (Var z))) nf2))
+    (nfo '() '(App (Lam (Lam (Lam (Var z)))) (Lam (Var z))) nf1)
+    (nfo '() '(Lam (Lam (Var z))) nf2))
   '(((Lam (Lam (Var z))) (Lam (Lam (Var z)))))
   )
 
