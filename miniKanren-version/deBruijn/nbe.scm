@@ -62,7 +62,7 @@
          (== `(Napp ,f ,x) n)
          (== `(App ,fe ,xe) expr)
          (unevalNo d f fe)
-         (unevalNo d x xe))))))
+         (unevalo d x xe))))))
 
 (define minuso
   (lambda (n m n-m)
