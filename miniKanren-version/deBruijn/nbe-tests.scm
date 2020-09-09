@@ -329,13 +329,19 @@
 ;;; this run* returns () instead of the normal form.  Why?
 (test "nfo-11"
   (run* (q) (nfo '() (parse '((lambda (x) x) (lambda (x) (x x)))) q))
-  '((Lam x (App (Var x) (Var x)))))
+  '((Lam (App (Var z) (Var z)))))
 
 ;;; WEB -- BROKEN TEST!
 ;;; this run* returns () instead of the normal form.  Why?
 (test "nfo-11b"
   (run* (q) (nfo '() (parse '(lambda (x) (x x))) q))
-  '((Lam x (App (Var x) (Var x)))))
+  '((Lam (App (Var z) (Var z)))))
+
+;;; WEB -- BROKEN TEST!
+;;; this run* returns () instead of the normal form.  Why?
+(test "nfo-11c"
+  (run* (q) (nfo '() '(Lam (App (Var z) (Var z))) q))
+  '((Lam (App (Var z) (Var z)))))
 
 (test "appo-0"
   (run 3 (f v  val)
