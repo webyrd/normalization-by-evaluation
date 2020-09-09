@@ -149,12 +149,12 @@
   '((Lam (Var z))
     (App (Lam (Lam (Var z))) (Lam _.0))
     (Lam (App (Lam (Var (s z))) (Lam _.0))) ;; (lambda (x) ((lambda (y) x) (lambda . _.0)))
-    (App (Lam (Var z)) (Lam (Var z)))
     (Lam (App (Lam (Var z)) (Var z)))
+    (App (Lam (Var z)) (Lam (Var z)))
     (Lam (App (Lam (Var (s z))) (Var z)))
     (App (Lam (Lam (App (Lam (Var (s z))) (Lam _.0)))) (Lam _.1))
+    (Lam (App (Lam (App (Lam (Var (s (s z)))) (Lam _.0))) (Lam _.1)))
     (App (Lam (Lam (App (Lam (Var z)) (Var z)))) (Lam _.0))
-    (App (Lam (Var z)) (Lam (App (Lam (Var (s z))) (Lam _.0))))
     (App (Lam (Lam (App (Lam (Var (s z))) (Var z)))) (Lam _.0))))
 
 (test "nfo-2"
@@ -172,31 +172,29 @@
      (Lam (App (Lam (Var (s z))) (Lam _.1)))
      (Lam (Var z)))
     ((App (Lam (Lam (Var z))) (Lam _.0))
-     (App (Lam (Var z)) (Lam (Var z)))
+     (Lam (App (Lam (Var z)) (Var z)))
      (Lam (Var z)))
     ((App (Lam (Lam (Var z))) (Lam _.0))
-     (Lam (App (Lam (Var z)) (Var z)))
+     (App (Lam (Var z)) (Lam (Var z)))
      (Lam (Var z)))
     ((App (Lam (Lam (Var z))) (Lam _.0))
      (Lam (App (Lam (Var (s z))) (Var z)))
      (Lam (Var z)))
     ((App (Lam (Lam (Var z))) (Lam _.0))
-     (App (Lam (Lam (App (Lam (Var (s z))) (Lam _.1))))
-          (Lam _.2))
+     (App (Lam (Lam (App (Lam (Var (s z))) (Lam _.1)))) (Lam _.2))
      (Lam (Var z)))
-    (((App (Lam (Lam (Lam (Var z)))) (Lam _.0))
-      (App (Lam (Lam (Lam (Var z)))) (Lam _.1))
-      (Lam (Lam (Var z))))
-     (=/= ((_.0 _.1))))
     ((App (Lam (Lam (Var z))) (Lam _.0))
-     (App (Lam (Lam (App (Lam (Var z)) (Var z)))) (Lam _.1))
+     (Lam (App (Lam (App (Lam (Var (s (s z)))) (Lam _.1))) (Lam _.2)))
      (Lam (Var z)))
     ((App (Lam (Var z)) (Lam (Var z)))
      (App (Lam (Lam (Var z))) (Lam _.0))
      (Lam (Var z)))
-    ((App (Lam (Lam (Lam (Var z)))) (Lam _.0))
-     (Lam (App (Lam (Lam (Var z))) (Lam _.1)))
-     (Lam (Lam (Var z))))))
+    ((App (Lam (Var z)) (Lam (Var z)))
+     (Lam (App (Lam (Var (s z))) (Lam _.0)))
+     (Lam (Var z)))
+    ((App (Lam (Lam (Var z))) (Lam _.0))
+     (App (Lam (Lam (App (Lam (Var z)) (Var z)))) (Lam _.1))
+     (Lam (Var z)))))
 
 (test "nfo-3"
   (run 5 (e1 e2 ne)
@@ -211,16 +209,16 @@
       (Lam (Lam (Var z))))
      (=/= ((_.0 _.1))))
     ((App (Lam (Lam (Lam (Var z)))) (Lam _.0))
-     (Lam (App (Lam (Lam (Var z))) (Lam _.1)))
-     (Lam (Lam (Var z))))
-    ((App (Lam (Lam (Lam (Var z)))) (Lam _.0))
      (Lam (Lam (App (Lam (Var (s z))) (Lam _.1))))
      (Lam (Lam (Var z))))
     ((App (Lam (Lam (Lam (Var z)))) (Lam _.0))
-     (App (Lam (Var z)) (Lam (Lam (Var z))))
+     (Lam (App (Lam (Lam (Var z))) (Lam _.1)))
      (Lam (Lam (Var z))))
     ((App (Lam (Lam (Lam (Var z)))) (Lam _.0))
-     (App (Lam (Lam (Var (s z)))) (Lam (Var z)))
+     (Lam (Lam (App (Lam (Var z)) (Var z))))
+     (Lam (Lam (Var z))))
+    ((App (Lam (Lam (Lam (Var z)))) (Lam _.0))
+     (App (Lam (Var z)) (Lam (Lam (Var z))))
      (Lam (Lam (Var z))))))
 
 (test "nfo-4"
@@ -237,16 +235,16 @@
       (Lam (Lam (Var (s z)))))
      (=/= ((_.0 _.1))))
     ((App (Lam (Lam (Lam (Var (s z))))) (Lam _.0))
-     (Lam (App (Lam (Lam (Var (s (s z))))) (Lam _.1)))
+     (Lam (Lam (App (Lam (Var (s (s z)))) (Lam _.1))))
      (Lam (Lam (Var (s z)))))
     ((App (Lam (Lam (Lam (Var (s z))))) (Lam _.0))
-     (Lam (Lam (App (Lam (Var (s (s z)))) (Lam _.1))))
+     (Lam (App (Lam (Lam (Var (s (s z))))) (Lam _.1)))
      (Lam (Lam (Var (s z)))))
     ((App (Lam (Lam (Lam (Var (s z))))) (Lam _.0))
      (App (Lam (Var z)) (Lam (Lam (Var (s z)))))
      (Lam (Lam (Var (s z)))))
     ((App (Lam (Lam (Lam (Var (s z))))) (Lam _.0))
-     (Lam (App (Lam (Var z)) (Lam (Var (s z)))))
+     (Lam (Lam (App (Lam (Var (s (s z)))) (Var z))))
      (Lam (Lam (Var (s z)))))))
 
 (test "nfo-5"
@@ -267,10 +265,10 @@
      (Lam (App (Lam (Lam (Lam (Var z)))) (Lam _.1)))
      (Lam (Lam (Lam (Var z)))))
     ((App (Lam (Lam (Lam (Lam (Var z))))) (Lam _.0))
-     (Lam (Lam (App (Lam (Lam (Var z))) (Lam _.1))))
+     (Lam (Lam (Lam (App (Lam (Var (s z))) (Lam _.1)))))
      (Lam (Lam (Lam (Var z)))))
     ((App (Lam (Lam (Lam (Lam (Var z))))) (Lam _.0))
-     (Lam (Lam (Lam (App (Lam (Var (s z))) (Lam _.1)))))
+     (Lam (Lam (App (Lam (Lam (Var z))) (Lam _.1))))
      (Lam (Lam (Lam (Var z)))))
     ((App (Lam (Lam (Lam (Lam (Var z))))) (Lam _.0))
      (App (Lam (Var z)) (Lam (Lam (Lam (Var z)))))
@@ -327,18 +325,18 @@
   )
 
 
-;;; WEB -- this run* returns () instead of the normal form.  Why?
+;;; WEB -- BROKEN TEST!
+;;; this run* returns () instead of the normal form.  Why?
 (test "nfo-11"
   (run* (q) (nfo '() (parse '((lambda (x) x) (lambda (x) (x x)))) q))
   '((Lam x (App (Var x) (Var x)))))
 
-;;; WEB -- this run* returns () instead of the normal form.  Why?
+;;; WEB -- BROKEN TEST!
+;;; this run* returns () instead of the normal form.  Why?
 (test "nfo-11b"
   (run* (q) (nfo '() (parse '(lambda (x) (x x))) q))
   '((Lam x (App (Var x) (Var x)))))
 
-#|
-;;; WEB -- these tests no longer run, since I inlined `appo` in `evalo`.
 (test "appo-0"
   (run 3 (f v  val)
     (appo f v val))
@@ -363,4 +361,4 @@
     (== `(N ,n) f)
     (appo f v val))
   '(((N _.0) _.1 _.0 (N (NApp _.0 _.1)))))
-|#
+

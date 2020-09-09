@@ -24,23 +24,10 @@
          (ntho x env val)))
       ((fresh (f x fv xv)
          (== `(App ,f ,x) expr)
-         ;; WEB -- inlined `appo`, and distributed `evalo` calls, to try to fail-fast
-         (conde
-           ((fresh (n)
-              (== `(N ,n) fv)
-              (== `(N (NApp ,n ,xv)) val)
-              (evalo env f fv)
-              (evalo env x xv)))
-           ((fresh (env^ body)
-              (== `(Clo ,env^ ,body) fv)
-              (evalo env f fv)
-              (evalo env x xv)
-              (evalo `(,xv . ,env^) body val))))
-         ;;
-         )))))
+         (evalo env f fv)
+         (evalo env x xv)
+         (appo fv xv val))))))
 
-#|
-;;; WEB -- Original `appo` definition
 (define appo
   (lambda (f v val)
     (conde
@@ -50,7 +37,6 @@
       ((fresh (env body)
          (== `(Clo ,env ,body) f)
          (evalo `(,v . ,env) body val))))))
-|#
 
 (define unevalo
   (lambda (d val expr)
