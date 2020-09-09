@@ -327,17 +327,15 @@
   )
 
 
-;;; WEB -- this run* returns () -- is this actually correct?  Why
-;;; isn't there a normal form?
+;;; WEB -- this run* returns () instead of the normal form.  Why?
 (test "nfo-11"
   (run* (q) (nfo '() (parse '((lambda (x) x) (lambda (x) (x x)))) q))
-  '???)
+  '((Lam x (App (Var x) (Var x)))))
 
-;;; WEB -- this run* returns () -- is this actually correct?  Why
-;;; isn't there a normal form?
+;;; WEB -- this run* returns () instead of the normal form.  Why?
 (test "nfo-11b"
   (run* (q) (nfo '() (parse '(lambda (x) (x x))) q))
-  '???)
+  '((Lam x (App (Var x) (Var x)))))
 
 #|
 ;;; WEB -- these tests no longer run, since I inlined `appo` in `evalo`.
