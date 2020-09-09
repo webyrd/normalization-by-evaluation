@@ -327,6 +327,18 @@
   )
 
 
+;;; WEB -- this run* returns () -- is this actually correct?  Why
+;;; isn't there a normal form?
+(test "nfo-11"
+  (run* (q) (nfo '() (parse '((lambda (x) x) (lambda (x) (x x)))) q))
+  '???)
+
+;;; WEB -- this run* returns () -- is this actually correct?  Why
+;;; isn't there a normal form?
+(test "nfo-11b"
+  (run* (q) (nfo '() (parse '(lambda (x) (x x))) q))
+  '???)
+
 #|
 ;;; WEB -- these tests no longer run, since I inlined `appo` in `evalo`.
 (test "appo-0"
