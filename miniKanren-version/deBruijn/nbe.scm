@@ -59,7 +59,7 @@
          (== `(s ,d-1) d)
          (minuso d-1 n^ d-n-1)))
       ((fresh (f x fe xe)
-         (== `(Napp ,f ,x) n)
+         (== `(NApp ,f ,x) n)
          (== `(App ,fe ,xe) expr)
          (unevalNo d f fe)
          (unevalo d x xe))))))

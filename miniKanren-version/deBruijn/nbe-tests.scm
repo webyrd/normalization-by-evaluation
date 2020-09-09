@@ -125,8 +125,8 @@
       (== `(App . ,e^) e))
     (unevalo n1 v1 e)
     (unevalo n2 v2 e))
-  '(((N (Napp (NVar z) (N (NVar z))))
-     (N (Napp (NVar (s z)) (N (NVar (s z)))))
+  '(((N (NApp (NVar z) (N (NVar z))))
+     (N (NApp (NVar (s z)) (N (NVar (s z)))))
      (s _.0)
      (s (s _.0))
      (App (Var _.0) (Var _.0)))))
@@ -325,23 +325,41 @@
   )
 
 
-;;; WEB -- BROKEN TEST!
-;;; this run* returns () instead of the normal form.  Why?
 (test "nfo-11"
   (run* (q) (nfo '() (parse '((lambda (x) x) (lambda (x) (x x)))) q))
   '((Lam (App (Var z) (Var z)))))
 
-;;; WEB -- BROKEN TEST!
-;;; this run* returns () instead of the normal form.  Why?
 (test "nfo-11b"
   (run* (q) (nfo '() (parse '(lambda (x) (x x))) q))
   '((Lam (App (Var z) (Var z)))))
 
-;;; WEB -- BROKEN TEST!
-;;; this run* returns () instead of the normal form.  Why?
 (test "nfo-11c"
   (run* (q) (nfo '() '(Lam (App (Var z) (Var z))) q))
   '((Lam (App (Var z) (Var z)))))
+
+
+(test "evalo-b1"
+  (run* (q) (evalo '() '(Lam (App (Var z) (Var z))) q))
+  '((Clo () (App (Var z) (Var z)))))
+
+(test "unevalo-b1"
+  (run* (q) (unevalo 'z '(Clo () (App (Var z) (Var z))) q))
+  '((Lam (App (Var z) (Var z)))))
+
+(test "evalo-b2"
+  (run* (q) (evalo `((N (NVar z))) '(App (Var z) (Var z)) q))
+  '((N (NApp (NVar z) (N (NVar z))))))
+
+(test "unevalo-b2"
+  (run* (q) (unevalo '(s z) '(N (NApp (NVar z) (N (NVar z)))) q))
+  '((App (Var z) (Var z))))
+
+(test "unevalNo-b1"
+  (run* (q) (unevalNo '(s z) '(NApp (NVar z) (N (NVar z))) q))
+  '((App (Var z) (Var z))))
+
+
+
 
 (test "appo-0"
   (run 3 (f v  val)
