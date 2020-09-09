@@ -89,7 +89,9 @@
                 (pmatch expr
                   (,x (guard (symbol? x))
                    (let ((v (member x env)))
-                     (unless v (error 'parse "parser only handles closed terms"))
+                     (unless v
+                       (error 'parse
+                              "parser only handles closed terms"))
                      (let ((n (- (length env) (length v))))
                        (let ((pn (peano n)))
                          `(Var ,pn)))))
