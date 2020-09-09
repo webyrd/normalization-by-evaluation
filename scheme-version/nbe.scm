@@ -42,7 +42,7 @@
     (pmatch v
       [(Closure ,env ,x ,b)
        (let ((x^ (fresh xs x)))
-         (let ((bv (eval-expr `((,x . (N (Nvar ,x^))) . ,env) b)))
+         (let ((bv (eval-expr `((,x . (N (NVar ,x^))) . ,env) b)))
            (let ((b^ (uneval-value `((,x^ . ,xs)) bv)))
              `(Lam ,x^ ,b^))))]
       [(N ,n) (uneval-neutral xs n)])))
