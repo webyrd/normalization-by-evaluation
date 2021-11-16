@@ -1,4 +1,5 @@
 (load "../scheme-helpers/pmatch.scm")
+(load "../scheme-helpers/test-macro.scm")
 
 ;; just to be safe
 (define eval 'eval-undefined)
@@ -68,13 +69,14 @@
         (let ((result (eval-expr `((id . ,id_) (const . ,const_)) '(App (Var const) (Var id)))))
           result)))))
 
-(printf "~s\n" (main))
-;; (Closure ((x Closure () x (Var x))) y (Var x))
+(test "main"
+  (main)
+  '(Closure ((x Closure () x (Var x))) y (Var x)))
 
 ;; nf [] (Lam "x" (App (Lam "y" (App (Var "x") (Var "y"))) (Lam "x" (Var "x"))))
 ;; =>
 ;; Lam "x" (App (Var "x") (Lam "x'" (Var "x'")))
+(test "nf-0"
+  (nf '() '(Lam x (App (Lam y (App (Var x) (Var y))) (Lam x (Var x)))))
+  '(Lam x (App (Var x) (Lam x^ (Var x^)))))
 
-(printf "~s\n" (nf '() '(Lam x (App (Lam y (App (Var x) (Var y))) (Lam x (Var x))))))
-;; =>
-'(Lam x (App (Var x) (Lam x^ (Var x^))))
