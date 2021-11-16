@@ -33,13 +33,13 @@
 (define apply-expro
   (lambda (f v val)
     (conde
+      ((fresh (n)
+         (== `(N ,n) f)
+         (== `(N (NApp ,n ,v)) val)))
       ((fresh (x body env)
          (== `(Closure ,x ,body ,env) f)
          (symbolo x)
-         (eval-expro body `((,x . ,v) . ,env) val)))
-      ((fresh (n)
-         (== `(N ,n) f)
-         (== `(N (NApp ,n ,v)) val))))))
+         (eval-expro body `((,x . ,v) . ,env) val))))))
 
 ;; Fast and simple fresho definition (written with Michael Ballantyne)
 ;; Rather than compute a renamed variable, we just describe the constraints.
@@ -52,6 +52,9 @@
 (define uneval-valueo
   (lambda (xs v expr)
     (conde
+      ((fresh (n)
+         (== `(N ,n) v)
+         (uneval-neutralo xs n expr)))
       ((fresh (x body env x^ body^ bv)
          (== `(Closure ,x ,body ,env) v)
          (== `(Lam ,x^ ,body^) expr)
@@ -59,10 +62,7 @@
          (symbolo x^)
          (fresho xs x^)
          (eval-expro body `((,x . (N (NVar ,x^))) . ,env) bv)
-         (uneval-valueo `(,x^ . ,xs) bv body^)))
-      ((fresh (n)
-         (== `(N ,n) v)
-         (uneval-neutralo xs n expr))))))
+         (uneval-valueo `(,x^ . ,xs) bv body^))))))
 
 (define uneval-neutralo
   (lambda (xs n expr)
@@ -71,7 +71,7 @@
          (== `(NVar ,x) n)
          (== `(Var ,x) expr)))
       ((fresh (n^ v ne ve)
-         (== `(NApp ,n^ ,v) n)         
+         (== `(NApp ,n^ ,v) n)
          (== `(App ,ne ,ve) expr)
          (uneval-neutralo xs n^ ne)
          (uneval-valueo xs v ve))))))

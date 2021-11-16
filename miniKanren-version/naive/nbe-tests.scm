@@ -37,12 +37,12 @@
       (Lam _.4 (Var _.2)))
      (=/= ((_.0 _.1)))
      (sym _.0 _.1 _.4))
+    ((N (NApp (NApp (NVar _.0) (N (NVar _.1))) (N (NVar _.2))))
+     (App (App (Var _.0) (Var _.1)) (Var _.2)))
     (((Closure _.0 (Lam _.1 (Var _.1)) _.2)
       (Lam _.3 (Lam _.4 (Var _.4))))
      (=/= ((_.3 _.4)))
-     (sym _.0 _.1 _.3 _.4))
-    ((N (NApp (NApp (NVar _.0) (N (NVar _.1))) (N (NVar _.2))))
-     (App (App (Var _.0) (Var _.1)) (Var _.2)))))
+     (sym _.0 _.1 _.3 _.4))))
 
 (test "uneval-valueo-1"
   (run* (expr)
