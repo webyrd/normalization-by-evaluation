@@ -1,5 +1,6 @@
 (load "../faster-miniKanren/mk-vicare.scm")
 (load "../faster-miniKanren/mk.scm")
+(load "../faster-miniKanren/test-check.scm")
 
 (define lookupo
   (lambda (x env val)
@@ -56,6 +57,22 @@
          (not-membero x^ xs))))))
 
 #|
+;; Alternative fresho definitions (written with Michael Ballantyne):
+
+(define fresho
+  (lambda (xs x^)
+    (fresh ()
+      (symbolo x^)
+      (absento x^ xs))))
+
+(define fresho
+  (lambda (xs x x^)
+    (fresh ()
+      (symbolo x^)
+      (absento x^ xs))))
+|#
+
+#|
 ;;; WEB -- this naive recursive definition of `fresho` is unfortunate,
 ;;; since it can generate infinitely many duplicate results,
 ;;; even in a standard use case.
@@ -100,8 +117,8 @@
          (symbolo x)
          (symbolo x^)
          (fresho xs x x^)
-         (eval-expro body `((,x . (N (Nvar ,x^))) . ,env) bv)
-         (uneval-valueo `((,x^ . ,xs)) bv body^)))
+         (eval-expro body `((,x . (N (NVar ,x^))) . ,env) bv)
+         (uneval-valueo `(,x^ . ,xs) bv body^)))
       ((fresh (n)
          (== `(N ,n) v)
          (uneval-neutralo xs n expr))))))
@@ -132,5 +149,17 @@
         (eval-expro '(Lam x (Lam y (Var x))) '() const_)
         (eval-expro '(App (Var const) (Var id)) `((id . ,id_) (const . ,const_)) result)))))
 
-;; (printf "~s\n" (main))
-;; ((Closure y (Var x) ((x Closure x (Var x) ()))))
+
+(test "main"
+  (main)
+  '((Closure y (Var x) ((x Closure x (Var x) ())))))
+
+;; nf [] (Lam "x" (App (Lam "y" (App (Var "x") (Var "y"))) (Lam "x" (Var "x"))))
+;; =>
+;; Lam "x" (App (Var "x") (Lam "x'" (Var "x'")))
+(test "nf-0"
+  (run* (expr)
+    (nfo '(Lam x (App (Lam y (App (Var x) (Var y))) (Lam x (Var x)))) '() expr))
+  '(((Lam x (App (Var x) (Lam _.0 (Var _.0))))
+     (=/= ((_.0 x)))
+     (sym _.0))))
