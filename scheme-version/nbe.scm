@@ -43,7 +43,7 @@
       [(Closure ,env ,x ,b)
        (let ((x^ (fresh xs x)))
          (let ((bv (eval-expr `((,x . (N (NVar ,x^))) . ,env) b)))
-           (let ((b^ (uneval-value `((,x^ . ,xs)) bv)))
+           (let ((b^ (uneval-value `(,x^ . ,xs) bv)))
              `(Lam ,x^ ,b^))))]
       [(N ,n) (uneval-neutral xs n)])))
 
@@ -70,3 +70,11 @@
 
 (printf "~s\n" (main))
 ;; (Closure ((x Closure () x (Var x))) y (Var x))
+
+;; nf [] (Lam "x" (App (Lam "y" (App (Var "x") (Var "y"))) (Lam "x" (Var "x"))))
+;; =>
+;; Lam "x" (App (Var "x") (Lam "x'" (Var "x'")))
+
+(printf "~s\n" (nf '() '(Lam x (App (Lam y (App (Var x) (Var y))) (Lam x (Var x))))))
+;; =>
+'(Lam x (App (Var x) (Lam x^ (Var x^))))
