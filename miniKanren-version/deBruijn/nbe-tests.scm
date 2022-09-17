@@ -386,3 +386,12 @@
     (appo f v val))
   '(((N _.0) _.1 _.0 (N (NApp _.0 _.1)))))
 
+(test "nfo-capture"
+  (run* (q)
+    (nfo
+     '()
+     `(Lam 
+       (App (Lam (Lam (Var (s z))))
+            (Var z)))
+     q))
+  '((Lam (Lam (Var (s z))))))

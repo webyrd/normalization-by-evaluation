@@ -97,3 +97,13 @@
      '()
      `(Lam y (Lam y (Var y)))))
   '())
+
+(test "eval-expro/uneval-valueo-4-expressed"
+  (run* (q)
+    (nfo
+     `(Lam y
+           (App (Lam x (Lam y (Var x)))
+                (Var y)))
+     '()
+     `(Lam y (Lam z (Var y)))))
+  '(_.0))
