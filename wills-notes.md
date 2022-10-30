@@ -1,5 +1,51 @@
 # Will's Notes
 
+```
+(((lambda (f)
+    ((lambda (x) (f (lambda (v) ((x x) v))))
+     (lambda (x) (f (lambda (v) ((x x) v))))))
+  (lambda (list?)
+    (lambda (l)
+      (if (null? l)
+          #t
+          (if (pair? l)
+              (list? (cdr l))
+              #f)))))
+ '(1 2 3))
+=> #t
+```
+
+```
+> (define Z (lambda (f)
+      ((lambda (x) (f (lambda (v) ((x x) v))))
+       (lambda (x) (f (lambda (v) ((x x) v)))))))
+> (define F (lambda (list?)
+      (lambda (l)
+        (if (null? l)
+            #t
+            (if (pair? l)
+                (list? (cdr l))
+                #f)))))
+> (Z F)
+#<procedure>
+> (F (Z F))
+#<procedure>
+> ((Z F) '(1 2 3))
+#t
+> ((F (Z F)) '(1 2 3))
+#t
+> ((F (Z F)) '(1 2 3 4 5 6 7))
+#t
+```
+
+If I uneval the closure resulting from `(Z F)` and from `(F (Z F))`, do I get the same `lambda` expression?
+
+That is, is `(uneval (eval '(Z F)))` equal to `(uneval (eval '(F (Z F))))`
+
+If so, I might be able to synthesize `Z` using the relational `eval` and `uneval`.
+
+
+
 The new hotness is the de Bruijn + nbe version!
 
 Things to try:
