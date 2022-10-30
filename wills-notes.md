@@ -16,10 +16,12 @@
 ```
 
 ```
-> (define Z (lambda (f)
+> (define Z
+    (lambda (f)
       ((lambda (x) (f (lambda (v) ((x x) v))))
        (lambda (x) (f (lambda (v) ((x x) v)))))))
-> (define F (lambda (list?)
+> (define F
+    (lambda (list?)
       (lambda (l)
         (if (null? l)
             #t
