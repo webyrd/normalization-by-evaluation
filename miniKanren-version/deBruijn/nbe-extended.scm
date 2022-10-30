@@ -25,7 +25,7 @@
       ((fresh (env body)
          (== `(Clo ,env ,body) val))))))
 
-(define evalo
+(define eval-expro
   (lambda (env expr val)
     (conde
       ((== #f expr) (== #f val))
@@ -43,35 +43,39 @@
          (conde
            ((== '() v) (== #t val))
            ((=/= '() v) (== #f val)))
-         (evalo env e v)))
+         (eval-expro env e v)))
       ((fresh (e v a d)
          (== `(pair? ,e) expr)
          (conde
            ((== `(Pair ,a ,d) v) (== #t val))
            ((not-pairo v) (== #f val)))
-         (evalo env e v)))
+         (eval-expro env e v)))
       ((fresh (e v d)
          (== `(car ,e) expr)
-         (evalo env e `(Pair ,val ,d))))      
+         (eval-expro env e `(Pair ,val ,d))))      
       ((fresh (e v a)
          (== `(cdr ,e) expr)
-         (evalo env e `(Pair ,a ,val))))
+         (eval-expro env e `(Pair ,a ,val))))
       ((fresh (e1 e2 v1 v2)
          (== `(cons ,e1 ,e2) expr)
          (== `(Pair ,v1 ,v2) val)
-         (evalo env e1 v1)
-         (evalo env e2 v2)))      
+         (eval-expro env e1 v1)
+         (eval-expro env e2 v2)))      
       ((fresh (e1 e2 e3 v)
          (== `(if ,e1 ,e2 ,e3) expr)
-         (evalo env e1 v)
+         (eval-expro env e1 v)
          (conde
-           ((=/= #f v) (evalo env e2 val))
-           ((== #f v) (evalo env e3 val)))))      
+           ((=/= #f v) (eval-expro env e2 val))
+           ((== #f v) (eval-expro env e3 val)))))      
       ((fresh (f x fv xv)
          (== `(App ,f ,x) expr)
-         (evalo env f fv)
-         (evalo env x xv)
+         (eval-expro env f fv)
+         (eval-expro env x xv)
          (appo fv xv val))))))
+
+(define evalo
+  (lambda (expr val)
+    (eval-expro '() expr val)))
 
 (define appo
   (lambda (f v val)
@@ -81,7 +85,7 @@
          (== `(N (NApp ,n ,v)) val)))
       ((fresh (env body)
          (== `(Clo ,env ,body) f)
-         (evalo `(,v . ,env) body val))))))
+         (eval-expro `(,v . ,env) body val))))))
 
 (define unevalo
   (lambda (d val expr)
@@ -101,7 +105,7 @@
       ((fresh (env body v expr^)
          (== `(Clo ,env ,body) val)
          (== `(Lam ,expr^) expr)
-         (evalo `((N (NVar ,d)) . ,env) body v)
+         (eval-expro `((N (NVar ,d)) . ,env) body v)
          (unevalo `(s ,d) v expr^))))))
 
 (define unevalNo
@@ -130,7 +134,7 @@
 (define nf-expro
   (lambda (env expr expr^)
     (fresh (v)
-      (evalo env expr v)
+      (eval-expro env expr v)
       (unevalo 'z v expr^))))
 
 (define nfo
@@ -184,6 +188,6 @@
   (lambda ()
     (run 1 (expr^)
       (fresh (id_ const_)
-        (evalo '() `(Lam (Var z)) id_)
-        (evalo '() `(Lam (Lam (Var (s z)))) const_)
+        (evalo `(Lam (Var z)) id_)
+        (evalo `(Lam (Lam (Var (s z)))) const_)
         (nf-expro `(,id_ ,const_) `(App (Var (s z)) (Var z)) expr^)))))

@@ -66,7 +66,7 @@
                                     (list? (cdr l))
                                     #f)))))
                        (cons 1 (cons 2 (cons 3 '())))))))
-    (run* (q) (evalo '() prog q)))
+    (run* (q) (evalo prog q)))
   '(#t))
 
 (test "parse/evalo-list?-2"
@@ -81,7 +81,7 @@
                                     (list? (cdr l))
                                     #f)))))
                        (cons 1 (cons 2 (cons 3 4)))))))
-    (run* (q) (evalo '() prog q)))
+    (run* (q) (evalo prog q)))
   '(#f))
 
 (test "parse/evalo-list?-3"
@@ -95,7 +95,7 @@
                                (if (pair? l)
                                    (list? (cdr l))
                                    #f))))))))
-    (run* (q) (evalo '() prog q)))
+    (run* (q) (evalo prog q)))
   '((Clo ((Clo ((Clo ((Clo ()
                            (Lam (if (null? (Var z))
                                     #t
@@ -180,7 +180,7 @@
 (test "parse/evalo-list?-3b3"
   (let ((prog (parse '(lambda (l)
                         (cdr l)))))
-    (run 1 (q) (evalo '() prog q)))
+    (run 1 (q) (evalo prog q)))
   '((Clo () (cdr (Var z)))))
 
 ;; why does this return ()?
