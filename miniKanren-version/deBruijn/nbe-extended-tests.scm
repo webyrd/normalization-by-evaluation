@@ -117,47 +117,47 @@
 
 
 (test "nfo-0"
-  (run* (q) (nfo '() '(quote ()) q))
+  (run* (q) (nfo '(quote ()) q))
   '((quote ())))
 
 (test "nfo-1"
-  (run* (q) (nfo '() '5 q))
+  (run* (q) (nfo '5 q))
   '(5))
 
 (test "nfo-2"
-  (run* (q) (nfo '() '#f q))
+  (run* (q) (nfo '#f q))
   '(#f))
 
 (test "nfo-3"
-  (run* (q) (nfo '() '#t q))
+  (run* (q) (nfo '#t q))
   '(#t))
 
 (test "nfo-4"
-  (run* (q) (nfo '() '(cons 3 4) q))
+  (run* (q) (nfo '(cons 3 4) q))
   '((cons 3 4)))
 
 (test "nfo-5"
-  (run* (q) (nfo '() '(null? 4) q))
+  (run* (q) (nfo '(null? 4) q))
   '(#f))
 
 (test "nfo-6"
-  (run* (q) (nfo '() '(null? (quote ())) q))
+  (run* (q) (nfo '(null? (quote ())) q))
   '(#t))
 
 (test "nfo-7"
-  (run* (q) (nfo '() '(car (cons 3 4)) q))
+  (run* (q) (nfo '(car (cons 3 4)) q))
   '(3))
 
 (test "nfo-8"
-  (run* (q) (nfo '() '(cdr (cons 3 4)) q))
+  (run* (q) (nfo '(cdr (cons 3 4)) q))
   '(4))
 
 (test "nfo-9"
-  (run* (q) (nfo '() '(if (null? 3) 4 5) q))
+  (run* (q) (nfo '(if (null? 3) 4 5) q))
   '(5))
 
 (test "nfo-10"
-  (run* (q) (nfo '() '(if (null? (quote ())) 4 5) q))
+  (run* (q) (nfo '(if (null? (quote ())) 4 5) q))
   '(4))
 
 
@@ -167,14 +167,14 @@
                           (if (null? l)
                               #t
                               #f))))))
-    (run 1 (q) (nfo '() prog q)))
+    (run 1 (q) (nfo prog q)))
   '((Lam (Lam #f))))
 
 ;; why does this return ()?
 (test "parse/nfo-list?-3b3"
   (let ((prog (parse '(lambda (l)
                         (cdr l)))))
-    (run 1 (q) (nfo '() prog q)))
+    (run 1 (q) (nfo prog q)))
   '???)
 
 (test "parse/evalo-list?-3b3"
@@ -188,19 +188,19 @@
   (let ((prog (parse '(lambda (list?)
                         (lambda (l)
                           (cdr l))))))
-    (run 1 (q) (nfo '() prog q)))
+    (run 1 (q) (nfo prog q)))
   '???)
 
 (test "parse/nfo-list?-3b3a"
   (let ((prog (parse '(lambda (l)
                         (cons l l)))))
-    (run 1 (q) (nfo '() prog q)))
+    (run 1 (q) (nfo prog q)))
   '((Lam (cons (Var z) (Var z)))))
 
 (test "parse/nfo-list?-3b4"
   (let ((prog (parse '(lambda (l)
                         l))))
-    (run 1 (q) (nfo '() prog q)))
+    (run 1 (q) (nfo prog q)))
   '((Lam (Var z))))
 
 ;; why does this return ()?
@@ -212,7 +212,7 @@
                               (if (pair? l)
                                   (list? (cdr l))
                                   #f)))))))
-    (run 1 (q) (nfo '() prog q)))
+    (run 1 (q) (nfo prog q)))
   '???)
 
 ;; why does this return ()?
@@ -227,7 +227,7 @@
                                (if (pair? l)
                                    (list? (cdr l))
                                    #f))))))))
-    (run* (q) (nfo '() prog q)))
+    (run* (q) (nfo prog q)))
   '???)
 
 ;; This seems to diverge!  Why?
@@ -235,5 +235,5 @@
   (let ((prog (parse '(lambda (f)
                         ((lambda (x) (f (lambda (v) ((x x) v))))
                          (lambda (x) (f (lambda (v) ((x x) v)))))))))
-    (run 1 (q) (nfo '() prog q)))
+    (run 1 (q) (nfo prog q)))
   '???)

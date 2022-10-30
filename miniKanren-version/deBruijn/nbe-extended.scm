@@ -127,11 +127,15 @@
          (== `(s ,n-1) n)
          (minuso n-1 m-1 n-m))))))
 
-(define nfo
+(define nf-helpero
   (lambda (env expr expr^)
     (fresh (v)
       (evalo env expr v)
       (unevalo 'z v expr^))))
+
+(define nfo
+  (lambda (expr expr^)
+    (nf-helpero '() expr expr^)))
 
 
 
@@ -182,4 +186,4 @@
       (fresh (id_ const_)
         (evalo '() `(Lam (Var z)) id_)
         (evalo '() `(Lam (Lam (Var (s z)))) const_)
-        (nfo `(,id_ ,const_) `(App (Var (s z)) (Var z)) expr^)))))
+        (nf-helpero `(,id_ ,const_) `(App (Var (s z)) (Var z)) expr^)))))
