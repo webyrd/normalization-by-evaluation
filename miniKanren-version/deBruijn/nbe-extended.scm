@@ -16,14 +16,14 @@
          (ntho n-1 rest val))))))
 
 (define not-pairo
-  (lambda (v)
+  (lambda (val)
     (conde
-      ((== #f v))
-      ((== #t v))
-      ((== '() v))
-      ((numbero v))
+      ((== #f val))
+      ((== #t val))
+      ((== '() val))
+      ((numbero val))
       ((fresh (env body)
-         (== `(Clo ,env ,body) v))))))
+         (== `(Clo ,env ,body) val))))))
 
 (define evalo
   (lambda (env expr val)
