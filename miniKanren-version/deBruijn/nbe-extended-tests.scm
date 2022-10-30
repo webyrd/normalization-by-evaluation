@@ -118,7 +118,7 @@
 
 (test "nfo-0"
   (run* (q) (nfo '() '(quote ()) q))
-  '('()))
+  '((quote ())))
 
 (test "nfo-1"
   (run* (q) (nfo '() '5 q))
