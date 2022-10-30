@@ -87,7 +87,7 @@
          (== `(Clo ,env ,body) f)
          (eval-expro `(,v . ,env) body val))))))
 
-(define unevalo
+(define uneval-valo
   (lambda (d val expr)
     (conde
       ((fresh (n)
@@ -100,13 +100,13 @@
       ((fresh (v1 v2 e1 e2)
          (== `(Pair ,v1 ,v2) val)
          (== `(cons ,e1 ,e2) expr)
-         (unevalo d v1 e1)
-         (unevalo d v2 e2)))
+         (uneval-valo d v1 e1)
+         (uneval-valo d v2 e2)))
       ((fresh (env body v expr^)
          (== `(Clo ,env ,body) val)
          (== `(Lam ,expr^) expr)
          (eval-expro `((N (NVar ,d)) . ,env) body v)
-         (unevalo `(s ,d) v expr^))))))
+         (uneval-valo `(s ,d) v expr^))))))
 
 (define unevalNo
   (lambda (d n expr)
@@ -120,7 +120,11 @@
          (== `(NApp ,f ,x) n)
          (== `(App ,fe ,xe) expr)
          (unevalNo d f fe)
-         (unevalo d x xe))))))
+         (uneval-valo d x xe))))))
+
+(define unevalo
+  (lambda (val expr)
+    (uneval-valo 'z val expr)))
 
 (define minuso
   (lambda (n m n-m)
@@ -135,7 +139,7 @@
   (lambda (env expr expr^)
     (fresh (v)
       (eval-expro env expr v)
-      (unevalo 'z v expr^))))
+      (unevalo v expr^))))
 
 (define nfo
   (lambda (expr expr^)
