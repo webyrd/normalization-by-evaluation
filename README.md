@@ -4,11 +4,13 @@ Relational normalization-by-evaluation (nbe) in miniKanren/alphaKanren.
 
 The Scheme, miniKanren, and alphaKanren code is based on Edward Kmett's (non-relational) Haskell code, presented to Will Byrd during a mini-tutorial on nbe.
 
+Edward live codes a normalization-by-evaluation system in this video [YOW! Lambda Jam 2020 - Edward Kmett - Cadenza Building Fast Functional Languages Fast](https://www.youtube.com/watch?v=25RmUl88jSw), starting at 6:30
+
 This repository includes the code from Michael Ballyntyne's 'faster-miniKanren' repo--please see the 'faster-miniKanren/LICENSE' file for the license for that code.  For all other code in this repository, please see the 'LICENSE' file in the top-level directory of this repository.
 
 Thank you to Michael Arntzenius for a previous tutorial on normalization-by-evaluation, and a separate attempt at implementing normalization-by-evaluation relationally.
 
-Thanks to Nada Amin for suggesting improved file names.
+Thanks to Nada Amin for suggesting improved file names, for adding tests, and for discussing normalization-by-evaluation, and its connections to relational programming.
 
 Code in this repository:
 
@@ -29,6 +31,8 @@ Code in this repository:
 ###### `test-macro.scm` (Simple test macro, adapted from Oleg Kislyov's test macro used in the original Kanren)
 
 Useful tutorials on normalization-by-evaluation:
+
+['Cadenza Building Fast Functional Languages Fast' by Edward Kmett, YOW! Lambda Jam 2020](https://www.youtube.com/watch?v=25RmUl88jSw), starting at 6:30
 
 ['Checking Dependent Types with Normalization by Evaluation: A Tutorial' by David Thrane Christiansen](http://www.davidchristiansen.dk/tutorials/nbe/)
 
