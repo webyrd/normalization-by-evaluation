@@ -18,7 +18,7 @@
     (conde
       ((fresh (x body)
          (== `(lambda (,x) ,body) expr)
-         (== `(Closure ,x ,body ,env) val)
+         (== `(closure ,x ,body ,env) val)
          (symbolo x)))
       ((symbolo expr) (lookupo expr env val))
       ((fresh (e1 e2 f v)
@@ -34,7 +34,7 @@
          (== `(N ,n) f)
          (== `(N (NApp ,n ,v)) val)))
       ((fresh (x body env)
-         (== `(Closure ,x ,body ,env) f)
+         (== `(closure ,x ,body ,env) f)
          (symbolo x)
          (eval-expro body `((,x . ,v) . ,env) val))))))
 
@@ -53,7 +53,7 @@
          (== `(N ,n) v)
          (uneval-neutralo xs n expr)))
       ((fresh (x body env x^ body^ bv)
-         (== `(Closure ,x ,body ,env) v)
+         (== `(closure ,x ,body ,env) v)
          (== `(lambda (,x^) ,body^) expr)
          (symbolo x)
          (symbolo x^)
@@ -89,7 +89,7 @@
 
 (test "main"
   (main)
-  '((Closure y x ((x Closure x x ())))))
+  '((closure y x ((x . (closure x x ()))))))
 
 ;; nf [] (Lam "x" (App (Lam "y" (App (Var "x") (Var "y"))) (Lam "x" (Var "x"))))
 ;; =>
