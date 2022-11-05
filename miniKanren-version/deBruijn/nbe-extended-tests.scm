@@ -61,6 +61,31 @@
     (nfo '() (parse '(null? (cons 3 4))) q))
   '(#f))
 
+(test "nfo-pair?-0"
+  (run* (q)
+    (nfo '() (parse '(pair? (quote ()))) q))
+  '(#f))
+
+(test "nfo-pair?-1"
+  (run* (q)
+    (nfo '() (parse '(pair? 5)) q))
+  '(#f))
+
+(test "nfo-pair?-2"
+  (run* (q)
+    (nfo '() (parse '(pair? #t)) q))
+  '(#f))
+
+(test "nfo-pair?-3"
+  (run* (q)
+    (nfo '() (parse '(pair? (lambda (x) x))) q))
+  '(#f))
+
+(test "nfo-pair?-4"
+  (run* (q)
+    (nfo '() (parse '(pair? (cons 3 4))) q))
+  '(#t))
+
 (test "nfo-if-0"
   (run* (q)
     (nfo '() (parse '(if #f 5 6)) q))
@@ -96,9 +121,16 @@
     (nfo '() (parse '(lambda (x) (if x (if #f 5 6) (if #t 7 8)))) q))
   '((Lam (if (Var z) 6 7))))
 
-(test "nfo-if/null?-6"
+(test "nfo-if/null?-0"
   (run* (q)
     (nfo '()
          (parse '(lambda (x) (if (null? x) (if #f 5 6) (if #t 7 8))))
          q))
   '((Lam (if (null? (Var z)) 6 7))))
+
+(test "nfo-if/pair?-0"
+  (run* (q)
+    (nfo '()
+         (parse '(lambda (x) (if (pair? x) (if #f 5 6) (if #t 7 8))))
+         q))
+  '((Lam (if (pair? (Var z)) 6 7))))
