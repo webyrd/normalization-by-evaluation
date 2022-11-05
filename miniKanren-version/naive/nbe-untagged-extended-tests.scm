@@ -93,6 +93,46 @@
     (nfo `(cons (quote cat) (quote fox)) '() expr))
   '((quote (cat . fox))))
 
+(test "nfo-cons-3"
+  (run* (expr)
+    (nfo `(cons (cons (quote a) (quote b)) (cons (quote c) (quote d)))
+         '()
+         expr))
+  '((quote ((a . b) . (c . d)))))
+
+
+(test "nfo-quoted-pair-backwards-1"
+  (run 13 (expr)
+    (nfo expr
+         '()
+         '(quote ((a . b) . (c . d)))))
+  '('((a . b) . (c . d))
+    (cons '(a . b) '(c . d))
+    (((lambda (_.0) '((a . b) . (c . d))) '_.1)
+     (sym _.0)
+     (absento (N _.1) (closure _.1)))
+    (cons '(a . b) (cons 'c 'd))
+    (((lambda (_.0) _.0) '((a . b) . (c . d)))
+     (sym _.0))
+    (cons (cons 'a 'b) '(c . d))
+    (((lambda (_.0) (cons '(a . b) '(c . d))) '_.1)
+     (sym _.0)
+     (absento (N _.1) (closure _.1)))
+    (((lambda (_.0) '((a . b) . (c . d))) (lambda (_.1) _.2))
+     (sym _.0 _.1))
+    ((cons '(a . b) ((lambda (_.0) '(c . d)) '_.1))
+     (sym _.0)
+     (absento (N _.1) (closure _.1)))
+    (((lambda (_.0) (cons '(a . b) _.0)) '(c . d)) (sym _.0))
+    (((lambda (_.0) (cons '(a . b) '(c . d)))
+      (lambda (_.1) _.2))
+     (sym _.0 _.1))
+    (((lambda (_.0) ((lambda (_.1) '((a . b) . (c . d))) '_.2))
+      '_.3)
+     (sym _.0 _.1)
+     (absento (N _.2) (N _.3) (closure _.2) (closure _.3)))
+    (cons (cons 'a 'b) (cons 'c 'd))))
+
 
 (test "eval-expro-1"
   (run* (val)
