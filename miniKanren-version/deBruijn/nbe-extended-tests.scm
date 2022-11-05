@@ -16,6 +16,26 @@
     (nfo '() (parse '(quote ())) q))
   '((quote ())))
 
+(test "nfo-cons-0"
+  (run* (q)
+    (nfo '() (parse '(cons 3 4)) q))
+  '((cons 3 4)))
+
+(test "nfo-cons-1"
+  (run* (q)
+    (nfo '() (parse '(cons 3 (quote ()))) q))
+  '((cons 3 (quote ()))))
+
+(test "nfo-cons-2"
+  (run* (q)
+    (nfo '() (parse '(cons (cons 4 5) (quote ()))) q))
+  '((cons (cons 4 5) (quote ()))))
+
+(test "nfo-cons-3"
+  (run* (q)
+    (nfo '() (parse '(lambda (x) (cons (cons x 5) x))) q))
+  '((Lam (cons (cons (Var z) 5) (Var z)))))
+
 (test "nfo-null?-0"
   (run* (q)
     (nfo '() (parse '(null? (quote ()))) q))
@@ -34,6 +54,11 @@
 (test "nfo-null?-2"
   (run* (q)
     (nfo '() (parse '(null? (lambda (x) x))) q))
+  '(#f))
+
+(test "nfo-null?-3"
+  (run* (q)
+    (nfo '() (parse '(null? (cons 3 4))) q))
   '(#f))
 
 (test "nfo-if-0"
