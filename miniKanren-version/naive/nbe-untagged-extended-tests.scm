@@ -36,6 +36,22 @@
   '((foo bar . baz)))
 
 
+(test "eval-expro-cons-1"
+  (run* (val)
+    (eval-expro `(cons (quote cat) (quote dog)) '() val))
+  '((cat . dog)))
+
+(test "eval-expro-cons-2"
+  (run* (val)
+    (eval-expro `(cons (quote cat) (quote ())) '() val))
+  '((cat)))
+
+(test "eval-expro-cons-3"
+  (run* (val)
+    (eval-expro `(cons (quote cat) (cons (quote fox) (quote ()))) '() val))
+  '((cat fox)))
+
+
 (test "eval-expro-1"
   (run* (val)
     (eval-expro `(lambda (z) z) '() val))
