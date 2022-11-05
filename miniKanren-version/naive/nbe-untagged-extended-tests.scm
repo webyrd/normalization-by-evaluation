@@ -10,6 +10,16 @@
   '((closure (y) x ((x . (closure (x) x ()))))))
 
 
+(test "quine-1"
+  (run 1 (q)
+    (eval-expro q '() q))
+  '((((lambda (_.0)
+        (cons _.0 (cons (cons 'quote (cons _.0 '())) '())))
+      '(lambda (_.0)
+         (cons _.0 (cons (cons 'quote (cons _.0 '())) '()))))
+     (=/= ((_.0 N)) ((_.0 closure)))
+     (sym _.0))))
+
 (test "eval-expro-quote-1"
   (run* (val)
     (eval-expro `(quote ()) '() val))
