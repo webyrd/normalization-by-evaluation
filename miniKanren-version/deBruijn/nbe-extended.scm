@@ -20,9 +20,14 @@
     (conde
       ((== #f expr) (== #f val))
       ((== #t expr) (== #t val))
+      ((numbero expr) (== expr val))
       ((fresh (body)
          (== `(Lam ,body) expr)
          (== `(Clo ,env ,body) val)))
+      ((fresh (e1 e2 e3 v1)
+         (== `(if ,e1 ,e2 ,e3) expr)
+         (evalo env e1 v1)
+         (ifo env v1 e2 e3 val)))
       ((fresh (x)
          (== `(Var ,x) expr)
          (ntho x env val)))
@@ -42,11 +47,25 @@
          (== `(Clo ,env ,body) f)
          (evalo `(,v . ,env) body val))))))
 
+(define ifo
+  (lambda (env v1 e2 e3 val)
+    (conde
+      ((== #t v1)
+       (evalo env e2 val))
+      ((== #f v1)
+       (evalo env e3 val))      
+      ((fresh (n1 v2 v3)
+         (== `(N ,n1) v1)
+         (== `(N (NIf ,n1 ,v2 ,v3)) val)
+         (evalo env e2 v2)
+         (evalo env e3 v3))))))
+
 (define unevalo
   (lambda (d val expr)
     (conde
       ((== #f val) (== #f expr))
       ((== #t val) (== #t expr))
+      ((numbero val) (== val expr))
       ((fresh (n)
          (== `(N ,n) val)
          (unevalNo d n expr)))
@@ -68,7 +87,13 @@
          (== `(NApp ,f ,x) n)
          (== `(App ,fe ,xe) expr)
          (unevalNo d f fe)
-         (unevalo d x xe))))))
+         (unevalo d x xe)))
+      ((fresh (n1 v2 v3 e1 e2 e3)
+         (== `(NIf ,n1 ,v2 ,v3) n)
+         (== `(if ,e1 ,e2 ,e3) expr)
+         (unevalNo d n1 e1)
+         (unevalo d v2 e2)
+         (unevalo d v3 e3))))))
 
 (define minuso
   (lambda (n m n-m)
@@ -94,6 +119,7 @@
                 (pmatch expr
                   (#f #f)
                   (#t #t)
+                  (,n (guard (number? n)) n)
                   (,x (guard (symbol? x))
                    (let ((v (member x env)))
                      (unless v
@@ -104,6 +130,8 @@
                          `(Var ,pn)))))
                   ((lambda (,x) ,body)
                    `(Lam ,(parse body `(,x . ,env))))
+                  ((if ,e1 ,e2 ,e3)
+                   `(if ,(parse e1 env) ,(parse e2 env) ,(parse e3 env)))
                   ((,e1 ,e2)
                    `(App ,(parse e1 env) ,(parse e2 env)))))))
       (parse expr '()))))
