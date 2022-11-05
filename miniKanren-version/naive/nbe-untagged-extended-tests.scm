@@ -52,6 +52,17 @@
   '((cat fox)))
 
 
+(test "nfo-cons-1"
+  (run* (expr)
+    (nfo `(cons (quote cat) (cons (quote fox) (quote ()))) '() expr))
+  '((quote (cat fox))))
+
+(test "nfo-cons-2"
+  (run* (expr)
+    (nfo `(cons (quote cat) (quote fox)) '() expr))
+  '((quote (cat . fox))))
+
+
 (test "eval-expro-1"
   (run* (val)
     (eval-expro `(lambda (z) z) '() val))
