@@ -22,7 +22,7 @@
          (symbolo x)))
       ((symbolo expr) (lookupo expr env val))
       ((fresh (e1 e2 f v)
-         (== `(App ,e1 ,e2) expr)
+         (== `(,e1 ,e2) expr)
          (eval-expro e1 env f)
          (eval-expro e2 env v)
          (apply-expro f v val))))))
@@ -68,7 +68,7 @@
        (symbolo expr))
       ((fresh (n^ v ne ve)
          (== `(NApp ,n^ ,v) n)
-         (== `(App ,ne ,ve) expr)
+         (== `(,ne ,ve) expr)
          (uneval-neutralo xs n^ ne)
          (uneval-valueo xs v ve))))))
 
@@ -84,7 +84,7 @@
       (fresh (id_ const_)
         (eval-expro '(lambda (x) x) '() id_)
         (eval-expro '(lambda (x) (lambda (y) x)) '() const_)
-        (eval-expro '(App const id) `((id . ,id_) (const . ,const_)) result)))))
+        (eval-expro '(const id) `((id . ,id_) (const . ,const_)) result)))))
 
 
 (test "main"
@@ -96,7 +96,7 @@
 ;; Lam "x" (App (Var "x") (Lam "x'" (Var "x'")))
 (test "nf-0"
   (run* (expr)
-    (nfo '(lambda (x) (App (lambda (y) (App x y)) (lambda (x) x))) '() expr))
-  '(((lambda (_.0) (App _.0 (lambda (_.1) _.1)))
+    (nfo '(lambda (x) ((lambda (y) (x y)) (lambda (x) x))) '() expr))
+  '(((lambda (_.0) (_.0 (lambda (_.1) _.1)))
      (=/= ((_.0 _.1)))
      (sym _.0 _.1))))
