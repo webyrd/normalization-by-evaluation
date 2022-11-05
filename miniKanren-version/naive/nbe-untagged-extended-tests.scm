@@ -10,7 +10,7 @@
   '((closure (y) x ((x . (closure (x) x ()))))))
 
 
-(test "quine-1"
+(test "eval-expro-quine-1"
   (run 1 (q)
     (eval-expro q '() q))
   '((((lambda (_.0)
@@ -19,6 +19,27 @@
          (cons _.0 (cons (cons 'quote (cons _.0 '())) '()))))
      (=/= ((_.0 N)) ((_.0 closure)))
      (sym _.0))))
+
+(test "nfo-quine-1"
+  (run 7 (q)
+    (nfo q '() q))
+  '(('_.0
+     (=/= ((_.0 N)) ((_.0 closure)))
+     (sym _.0))
+    '()
+    ('(_.0 . _.1)
+     (absento (N _.0) (N _.1) (closure _.0) (closure _.1)))
+    ((lambda (_.0) '_.1)
+     (=/= ((_.1 N)) ((_.1 closure)))
+     (sym _.0 _.1))
+    ((lambda (_.0) '())
+     (sym _.0))
+    ((lambda (_.0) '(_.1 . _.2))
+     (sym _.0)
+     (absento (N _.1) (N _.2) (closure _.1) (closure _.2)))
+    ((lambda (_.0) (lambda (_.1) '_.2))
+     (=/= ((_.0 _.1)) ((_.2 N)) ((_.2 closure)))
+     (sym _.0 _.1 _.2))))
 
 (test "eval-expro-quote-1"
   (run* (val)
