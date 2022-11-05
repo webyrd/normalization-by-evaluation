@@ -18,6 +18,8 @@
 (define evalo
   (lambda (env expr val)
     (conde
+      ((== #f expr) (== #f val))
+      ((== #t expr) (== #t val))
       ((fresh (body)
          (== `(Lam ,body) expr)
          (== `(Clo ,env ,body) val)))
@@ -43,6 +45,8 @@
 (define unevalo
   (lambda (d val expr)
     (conde
+      ((== #f val) (== #f expr))
+      ((== #t val) (== #t expr))
       ((fresh (n)
          (== `(N ,n) val)
          (unevalNo d n expr)))
@@ -88,6 +92,8 @@
     (letrec ((parse
               (lambda (expr env)
                 (pmatch expr
+                  (#f #f)
+                  (#t #t)
                   (,x (guard (symbol? x))
                    (let ((v (member x env)))
                      (unless v
