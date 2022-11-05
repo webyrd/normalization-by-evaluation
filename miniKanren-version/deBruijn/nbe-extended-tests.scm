@@ -51,12 +51,12 @@
     (nfo '() (parse '(null? #t)) q))
   '(#f))
 
-(test "nfo-null?-2"
+(test "nfo-null?-3"
   (run* (q)
     (nfo '() (parse '(null? (lambda (x) x))) q))
   '(#f))
 
-(test "nfo-null?-3"
+(test "nfo-null?-4"
   (run* (q)
     (nfo '() (parse '(null? (cons 3 4))) q))
   '(#f))
