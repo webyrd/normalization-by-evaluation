@@ -11,6 +11,11 @@
     (nfo '() (parse '#t) q))
   '(#t))
 
+(test "nfo-()-0"
+  (run* (q)
+    (nfo '() (parse '(quote ())) q))
+  '((quote ())))
+
 (test "nfo-if-0"
   (run* (q)
     (nfo '() (parse '(if #f 5 6)) q))

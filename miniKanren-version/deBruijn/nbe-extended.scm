@@ -20,6 +20,7 @@
     (conde
       ((== #f expr) (== #f val))
       ((== #t expr) (== #t val))
+      ((== '(quote ()) expr) (== '() val))
       ((numbero expr) (== expr val))
       ((fresh (body)
          (== `(Lam ,body) expr)
@@ -65,6 +66,7 @@
     (conde
       ((== #f val) (== #f expr))
       ((== #t val) (== #t expr))
+      ((== '() val) (== '(quote ()) expr))
       ((numbero val) (== val expr))
       ((fresh (n)
          (== `(N ,n) val)
@@ -119,6 +121,7 @@
                 (pmatch expr
                   (#f #f)
                   (#t #t)
+                  ((quote ()) '(quote ()))
                   (,n (guard (number? n)) n)
                   (,x (guard (symbol? x))
                    (let ((v (member x env)))
