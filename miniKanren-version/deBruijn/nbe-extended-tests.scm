@@ -36,6 +36,56 @@
     (nfo '() (parse '(lambda (x) (cons (cons x 5) x))) q))
   '((Lam (cons (cons (Var z) 5) (Var z)))))
 
+(test "nfo-car-0"
+  (run* (q)
+    (nfo '() (parse '(car (cons 3 4))) q))
+  '(3))
+
+(test "nfo-car-1"
+  (run* (q)
+    (nfo '() (parse '(car (cons 3 (quote ())))) q))
+  '(3))
+
+(test "nfo-car-2"
+  (run* (q)
+    (nfo '() (parse '(car (cons (cons 4 5) (quote ())))) q))
+  '((cons 4 5)))
+
+(test "nfo-car-3"
+  (run* (q)
+    (nfo '() (parse '(lambda (x) (car (cons (cons x 5) x)))) q))
+  '((Lam (cons (Var z) 5))))
+
+(test "nfo-car-4"
+  (run* (q)
+    (nfo '() (parse '(lambda (x) (car x))) q))
+  '((Lam (car (Var z)))))
+
+(test "nfo-cdr-0"
+  (run* (q)
+    (nfo '() (parse '(cdr (cons 3 4))) q))
+  '(4))
+
+(test "nfo-cdr-1"
+  (run* (q)
+    (nfo '() (parse '(cdr (cons 3 (quote ())))) q))
+  '((quote ())))
+
+(test "nfo-cdr-2"
+  (run* (q)
+    (nfo '() (parse '(cdr (cons (cons 4 5) (quote ())))) q))
+  '((quote ())))
+
+(test "nfo-cdr-3"
+  (run* (q)
+    (nfo '() (parse '(lambda (x) (cdr (cons (cons x 5) x)))) q))
+  '((Lam (Var z))))
+
+(test "nfo-cdr-4"
+  (run* (q)
+    (nfo '() (parse '(lambda (x) (cdr x))) q))
+  '((Lam (cdr (Var z)))))
+
 (test "nfo-null?-0"
   (run* (q)
     (nfo '() (parse '(null? (quote ()))) q))
