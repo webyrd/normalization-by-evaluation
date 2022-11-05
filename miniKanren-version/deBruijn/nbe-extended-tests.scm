@@ -16,6 +16,26 @@
     (nfo '() (parse '(quote ())) q))
   '((quote ())))
 
+(test "nfo-null?-0"
+  (run* (q)
+    (nfo '() (parse '(null? (quote ()))) q))
+  '(#t))
+
+(test "nfo-null?-1"
+  (run* (q)
+    (nfo '() (parse '(null? 5)) q))
+  '(#f))
+
+(test "nfo-null?-2"
+  (run* (q)
+    (nfo '() (parse '(null? #t)) q))
+  '(#f))
+
+(test "nfo-null?-2"
+  (run* (q)
+    (nfo '() (parse '(null? (lambda (x) x))) q))
+  '(#f))
+
 (test "nfo-if-0"
   (run* (q)
     (nfo '() (parse '(if #f 5 6)) q))
@@ -50,3 +70,10 @@
   (run* (q)
     (nfo '() (parse '(lambda (x) (if x (if #f 5 6) (if #t 7 8)))) q))
   '((Lam (if (Var z) 6 7))))
+
+(test "nfo-if/null?-6"
+  (run* (q)
+    (nfo '()
+         (parse '(lambda (x) (if (null? x) (if #f 5 6) (if #t 7 8))))
+         q))
+  '((Lam (if (null? (Var z)) 6 7))))
