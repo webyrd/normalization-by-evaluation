@@ -142,6 +142,61 @@
   '(((lambda (_.0) '(cat . dog))
      (sym _.0))))
 
+(test "nfo-lambda-12"
+  (run* (q)
+    (nfo '((lambda (x) x) (lambda (y) y)) '() q))
+  '(((lambda (_.0) _.0) (sym _.0))))
+
+(test "nfo-lambda-13"
+  (run* (q)
+    (nfo '(lambda (w) ((lambda (x) x) (lambda (y) y))) '() q))
+  '(((lambda (_.0) (lambda (_.1) _.1))
+     (=/= ((_.0 _.1)))
+     (sym _.0 _.1))))
+
+
+(test "nfo-cons-lambda-1"
+  (run* (q)
+    (nfo '(cons (lambda (x) x) (lambda (y) y)) '() q))
+  '(((cons (lambda (_.0) _.0) (lambda (_.1) _.1))
+     (=/= ((_.0 N)) ((_.0 closure)) ((_.1 N)) ((_.1 closure)))
+     (sym _.0 _.1))))
+
+(test "nfo-cons-lambda-2"
+  (run* (q)
+    (nfo '(cons (lambda (x) x) (lambda (x) x)) '() q))
+  '(((cons (lambda (_.0) _.0) (lambda (_.1) _.1))
+     (=/= ((_.0 N)) ((_.0 closure)) ((_.1 N)) ((_.1 closure)))
+     (sym _.0 _.1))))
+
+(test "nfo-cons-lambda-3"
+  (run* (q)
+    (nfo '(cons (lambda (x) (lambda (y) x))
+                (lambda (x) (lambda (y) x)))
+         '()
+         q))
+  '(((cons
+       (lambda (_.0) (lambda (_.1) _.0))
+       (lambda (_.2) (lambda (_.3) _.2)))
+     (=/= ((_.0 N)) ((_.0 _.1)) ((_.0 closure)) ((_.1 N))
+          ((_.1 closure)) ((_.2 N)) ((_.2 _.3)) ((_.2 closure))
+          ((_.3 N)) ((_.3 closure)))
+     (sym _.0 _.1 _.2 _.3))))
+
+(test "nfo-cons-lambda-4"
+  (run* (q)
+    (nfo '(cons (lambda (x) (lambda (y) x))
+                (lambda (x) (lambda (y) y)))
+         '()
+         q))
+  '(((cons
+       (lambda (_.0) (lambda (_.1) _.0))
+       (lambda (_.2) (lambda (_.3) _.3)))
+     (=/= ((_.0 N)) ((_.0 _.1)) ((_.0 closure)) ((_.1 N))
+          ((_.1 closure)) ((_.2 N)) ((_.2 _.3)) ((_.2 closure))
+          ((_.3 N)) ((_.3 closure)))
+     (sym _.0 _.1 _.2 _.3))))
+
 
 (test "eval-expro-lambda-6"
   (run* (q)
