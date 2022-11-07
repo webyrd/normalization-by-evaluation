@@ -3,6 +3,7 @@
 
 ;; TODO
 ;;
+;; * figure out if `nfo` Z combinator should diverge...
 ;; * support multi-argument `lambda`/closures and procedure application
 ;; * add `not-in-envo` to `evalo` to handle shadowing properly
 
@@ -121,6 +122,37 @@
     ((lambda (_.0) '())
      (sym _.0))
     '(#f)))
+
+(test "nfo-U-1"
+  (let ((U '(lambda (x) (x x))))
+    (run 1 (e)
+      (nfo U '() e)))
+  '(((lambda (_.0) (_.0 _.0)) (sym _.0))))
+
+#|
+;; `nfo` of Omega seems to diverge.
+;; This makes sense, since `nfo` first evaluates
+;; Omega, which diverges.
+(test "nfo-Omega-1"
+  (let ((Omega '((lambda (x) (x x)) (lambda (x) (x x)))))
+    (run 1 (e)
+      (nfo Omega '() e)))
+  '???)
+|#
+
+#|
+;; `nfo` of Z combinator seems to diverge.
+;; This might make sense, given that `nfo`
+;; evaluates under `lambda`s, which may
+;; result in self-application
+(test "nfo-Z-combinator-1"
+  (let ((Z '(lambda (f)
+              ((lambda (x) (f (lambda (v) ((x x) v))))
+               (lambda (x) (f (lambda (v) ((x x) v))))))))
+    (run 1 (e)
+      (nfo Z '() e)))
+  '???)
+|#
 
 
 (test "nfo-#f-1"
