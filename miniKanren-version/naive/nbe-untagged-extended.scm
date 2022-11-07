@@ -56,6 +56,10 @@
          (== `(,v1 . ,v2) val)
          (eval-expro e1 env v1)
          (eval-expro e2 env v2)))
+      ((fresh (e1 e2 e3 v1)
+         (== `(if ,e1 ,e2 ,e3) expr)
+         (eval-expro e1 env v1)
+         (eval-ifo env v1 e2 e3 val)))
       ((fresh (e1 e2 f v)
          (== `(,e1 ,e2) expr)
          (eval-expro e1 env f)
@@ -166,6 +170,21 @@
       ((fresh (n)
          (== `(N ,n) v)
          (== `(N (NCdr ,n)) val))))))
+
+
+(define eval-ifo
+  (lambda (env v1 e2 e3 val)
+    (conde
+      ((== #t v1)
+       (eval-expro e2 env val))
+      ((== #f v1)
+       (eval-expro e3 env val))
+      ((fresh (n1 v2 v3)
+         (== `(N ,n1) v1)
+         (== `(N (NIf ,n1 ,v2 ,v3)) val)
+         (eval-expro e2 env v2)
+         (eval-expro e3 env v3))))))
+
 
 (define apply-expro
   (lambda (f v val)
@@ -278,7 +297,13 @@
          (== `(NApp ,n^ ,v) n)
          (== `(,ne ,ve) expr)
          (uneval-neutralo xs n^ ne)
-         (uneval-valueo xs v ve))))))
+         (uneval-valueo xs v ve)))
+      ((fresh (n1 v2 v3 e1 e2 e3)
+         (== `(NIf ,n1 ,v2 ,v3) n)
+         (== `(if ,e1 ,e2 ,e3) expr)
+         (uneval-neutralo xs n1 e1)
+         (uneval-valueo xs v2 e2)
+         (uneval-valueo xs v3 e3))))))
 
 (define nfo
   (lambda (t env expr)
