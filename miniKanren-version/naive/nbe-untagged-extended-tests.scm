@@ -813,6 +813,26 @@
      val))
   '(#f))
 
+(test "eval-expro-5"
+  (run* (val)
+    (eval-expro
+     `((lambda (Z)
+         ((lambda (F)
+            ((Z F) '(1 2 . 3)))
+          (lambda (list?)
+            (lambda (l)
+              (if (null? l)
+                  #t
+                  (if (pair? l)
+                      (list? (cdr l))
+                      #f))))))
+       (lambda (f)
+         ((lambda (x) (f (lambda (v) ((x x) v))))
+          (lambda (x) (f (lambda (v) ((x x) v)))))))
+     '()
+     val))
+  '(#f))
+
 
 (test "uneval-valueo-0"
   (run 10 (val expr)
