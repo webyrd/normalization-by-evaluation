@@ -71,6 +71,13 @@
 
 
 (test "eval-expro-quine-1"
+  (run 2 (q)
+    (eval-expro q '() q))
+  '(#f #t))
+
+#|
+;; sloooow with the extended language
+(test "eval-expro-quine-2"
   (run 3 (q)
     (eval-expro q '() q))
   '(#f
@@ -81,6 +88,7 @@
          (cons _.0 (cons (cons 'quote (cons _.0 '())) '()))))
      (=/= ((_.0 N)) ((_.0 closure)))
      (sym _.0))))
+|#
 
 (test "nfo-quine-1"
   (run 12 (q)
@@ -144,6 +152,87 @@
   (run* (q)
     (nfo '((lambda (x) x) (quote #t)) '() q))
   '(#t))
+
+
+(test "nfo-car-1"
+  (run* (q)
+    (nfo '(car (cons 'cat 'dog)) '() q))
+  '((quote cat)))
+
+(test "nfo-car-2"
+  (run* (q)
+    (nfo '(car '(cat . dog)) '() q))
+  '((quote cat)))
+
+(test "nfo-car-3"
+  (run* (q)
+    (nfo '(lambda (x) (car '(cat . dog))) '() q))
+  '(((lambda (_.0) (quote cat))
+     (sym _.0))))
+
+(test "nfo-car-4"
+  (run* (q)
+    (nfo '(lambda (x) (car (cons 'cat 'dog))) '() q))
+  '(((lambda (_.0) (quote cat))
+     (sym _.0))))
+
+(test "nfo-car-5"
+  (run* (q)
+    (nfo '(lambda (x) (car (cons x 'dog))) '() q))
+  '(((lambda (_.0) _.0)
+     (sym _.0))))
+
+(test "nfo-car-6"
+  (run* (q)
+    (nfo '(lambda (x) (car (cons 'cat x))) '() q))
+  '(((lambda (_.0) (quote cat))
+     (sym _.0))))
+
+(test "nfo-car-7"
+  (run* (q)
+    (nfo '(car (lambda (x) x)) '() q))
+  '())
+
+
+(test "nfo-cdr-1"
+  (run* (q)
+    (nfo '(cdr (cons 'cat 'dog)) '() q))
+  '((quote dog)))
+
+(test "nfo-cdr-2"
+  (run* (q)
+    (nfo '(cdr '(cat . dog)) '() q))
+  '((quote dog)))
+
+(test "nfo-cdr-3"
+  (run* (q)
+    (nfo '(lambda (x) (cdr '(cat . dog))) '() q))
+  '(((lambda (_.0) (quote dog))
+     (sym _.0))))
+
+(test "nfo-cdr-4"
+  (run* (q)
+    (nfo '(lambda (x) (cdr (cons 'cat 'dog))) '() q))
+  '(((lambda (_.0) (quote dog))
+     (sym _.0))))
+
+(test "nfo-cdr-5"
+  (run* (q)
+    (nfo '(lambda (x) (cdr (cons x 'dog))) '() q))
+  '(((lambda (_.0) (quote dog))
+     (sym _.0))))
+
+(test "nfo-cdr-6"
+  (run* (q)
+    (nfo '(lambda (x) (cdr (cons 'cat x))) '() q))
+  '(((lambda (_.0) _.0)
+     (sym _.0))))
+
+(test "nfo-cdr-7"
+  (run* (q)
+    (nfo '(cdr (lambda (x) x)) '() q))
+  '())
+
 
 
 (test "nfo-lambda-1"
@@ -380,30 +469,28 @@
          '()
          '(quote ((a . b) . (c . d)))))
   '('((a . b) c . d)
+    ((car '(((a . b) c . d) . _.0))
+     (absento (N _.0) (closure _.0)))
+    ((cdr '(_.0 (a . b) c . d))
+     (absento (N _.0) (closure _.0)))
+    ((car (car '((((a . b) c . d) . _.0) . _.1)))
+     (absento (N _.0) (N _.1) (closure _.0) (closure _.1)))
+    ((car (cdr '(_.0 ((a . b) c . d) . _.1)))
+     (absento (N _.0) (N _.1) (closure _.0) (closure _.1)))
+    ((cdr (car '((_.0 (a . b) c . d) . _.1)))
+     (absento (N _.0) (N _.1) (closure _.0) (closure _.1)))
     (cons '(a . b) '(c . d))
-    (((lambda (_.0) '((a . b) c . d)) #f)
-     (sym _.0))
-    (((lambda (_.0) '((a . b) c . d)) #t)
-     (sym _.0))
-    (((lambda (_.0) (cons '(a . b) '(c . d))) #f)
-     (sym _.0))
-    (((lambda (_.0) '((a . b) c . d)) '_.1)
-     (sym _.0)
-     (absento (N _.1) (closure _.1)))
-    (((lambda (_.0) _.0) '((a . b) c . d))
-     (sym _.0))
-    (((lambda (_.0) (cons '(a . b) '(c . d))) #t)
-     (sym _.0))
-    (((lambda (_.0) ((lambda (_.1) '((a . b) c . d)) #f)) #f)
-     (sym _.0 _.1))
-    (cons '(a . b) (cons 'c 'd))
-    (((lambda (_.0) ((lambda (_.1) '((a . b) c . d)) #t)) #f)
-     (sym _.0 _.1))
-    (((lambda (_.0) (cons '(a . b) '(c . d))) '_.1)
-     (sym _.0)
-     (absento (N _.1) (closure _.1)))
-    (((lambda (_.0) '((a . b) c . d)) (lambda (_.1) _.2))
-     (sym _.0 _.1))))
+    ((car (car (car '(((((a . b) c . d) . _.0) . _.1) . _.2))))
+     (absento (N _.0) (N _.1) (N _.2)
+              (closure _.0) (closure _.1) (closure _.2)))
+    (car (cons '((a . b) c . d) #f))
+    ((cdr (cdr '(_.0 _.1 (a . b) c . d)))
+     (absento (N _.0) (N _.1) (closure _.0) (closure _.1)))
+    (cdr (cons #f '((a . b) c . d)))
+    (car (cons '((a . b) c . d) #t))
+    ((car (car (cdr '(_.0 (((a . b) c . d) . _.1) . _.2))))
+     (absento (N _.0) (N _.1) (N _.2)
+              (closure _.0) (closure _.1) (closure _.2)))))
 
 
 (test "eval-expro-1"
@@ -431,12 +518,12 @@
     (() '())
     (((N (NVar _.0)) _.0)
      (sym _.0))
-    (((N (NApp (NVar _.0) #f)) (_.0 #f))
-     (sym _.0))
-    (((N (NApp (NVar _.0) #t)) (_.0 #t))
+    (((N (NCar (NVar _.0))) (car _.0))
      (sym _.0))
     (((closure (_.0) #f _.1) (lambda (_.2) #f))
-     (sym _.0 _.2))))
+     (sym _.0 _.2))
+    (((N (NCdr (NVar _.0))) (cdr _.0))
+     (sym _.0))))
 
 (test "uneval-valueo-1"
   (run* (expr)

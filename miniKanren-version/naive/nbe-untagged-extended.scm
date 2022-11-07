@@ -26,6 +26,14 @@
          (== `(closure (,x) ,body ,env) val)
          (symbolo x)))
       ((symbolo expr) (lookupo expr env val))
+      ((fresh (e v)
+         (== `(car ,e) expr)
+         (eval-expro e env v)
+         (eval-caro v val)))
+      ((fresh (e v)
+         (== `(cdr ,e) expr)
+         (eval-expro e env v)
+         (eval-cdro v val)))      
       ((fresh (e1 e2 v1 v2)
          (== `(cons ,e1 ,e2) expr)
          (== `(,v1 . ,v2) val)
@@ -36,6 +44,30 @@
          (eval-expro e1 env f)
          (eval-expro e2 env v)
          (apply-expro f v val))))))
+
+(define eval-caro
+  (lambda (v val)
+    (conde
+      ((fresh (v1 v2)
+         (== `(,v1 . ,v2) v)
+         (== v1 val)
+         (=/= 'closure v1)
+         (=/= 'N v1)))
+      ((fresh (n)
+         (== `(N ,n) v)
+         (== `(N (NCar ,n)) val))))))
+
+(define eval-cdro
+  (lambda (v val)
+    (conde
+      ((fresh (v1 v2)
+         (== `(,v1 . ,v2) v)
+         (== v2 val)
+         (=/= 'closure v1)
+         (=/= 'N v1)))
+      ((fresh (n)
+         (== `(N ,n) v)
+         (== `(N (NCdr ,n)) val))))))
 
 (define apply-expro
   (lambda (f v val)
@@ -113,6 +145,14 @@
     (conde
       ((== `(NVar ,expr) n)
        (symbolo expr))
+      ((fresh (n1 e1)
+         (== `(NCar ,n1) n)
+         (== `(car ,e1) expr)
+         (uneval-neutralo xs n1 e1)))
+      ((fresh (n1 e1)
+         (== `(NCdr ,n1) n)
+         (== `(cdr ,e1) expr)
+         (uneval-neutralo xs n1 e1)))
       ((fresh (n^ v ne ve)
          (== `(NApp ,n^ ,v) n)
          (== `(,ne ,ve) expr)
