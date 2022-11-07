@@ -1,6 +1,30 @@
 (load "nbe-untagged-extended.scm")
 (load "../faster-miniKanren/test-check.scm")
 
+;; TODO
+;;
+;; Nada Amin wonders (5 November 02022) if (lambda (x) x) and
+;; (lambda (y) y) will normalize to the same expression.
+;;
+;; Taken more generally, this brings up many interesting questions.
+;;
+;; Try reproducing nominal-logic style tasks using nbe and our fresh approach
+;;
+;; Can we do capture-avoiding substitution?
+;;
+;; Can we do the things in the alphaKanren paper?
+;;
+;; Can we do the alphaLeanTAP things?
+;;
+;; Can we avoid the classic problems in miniKanren of conflating
+;; (lambda (x) (lambda (y) x)) with (lambda (x) (lambda (y) y))?
+;;
+;; Can we ensure that (lambda (x) x) and (lambda (y) y) have the same normal form?
+;;
+;; Can we ensure that (lambda (x) (lambda (y) x)) and (lambda (y) (lambda (x) y))
+;; have the same normal form, and that it differs from (lambda (x) (lambda (y) y))?
+
+
 (test "main"
   (run* (result)
     (fresh (id_ const_)
@@ -21,25 +45,142 @@
      (sym _.0))))
 
 (test "nfo-quine-1"
-  (run 7 (q)
+  (run 10 (q)
     (nfo q '() q))
-  '(('_.0
-     (=/= ((_.0 N)) ((_.0 closure)))
-     (sym _.0))
+  '(('_.0 (=/= ((_.0 N)) ((_.0 closure))) (sym _.0))
     '()
     ('(_.0 . _.1)
-     (absento (N _.0) (N _.1) (closure _.0) (closure _.1)))
+     (=/= ((_.0 N)) ((_.0 closure)) ((_.1 N)) ((_.1 closure)))
+     (sym _.0 _.1))
+    ('(_.0) (=/= ((_.0 N)) ((_.0 closure))) (sym _.0))
+    ('(() . _.0) (=/= ((_.0 N)) ((_.0 closure))) (sym _.0))
+    '(())
     ((lambda (_.0) '_.1)
      (=/= ((_.1 N)) ((_.1 closure)))
      (sym _.0 _.1))
-    ((lambda (_.0) '())
-     (sym _.0))
-    ((lambda (_.0) '(_.1 . _.2))
-     (sym _.0)
-     (absento (N _.1) (N _.2) (closure _.1) (closure _.2)))
-    ((lambda (_.0) (lambda (_.1) '_.2))
-     (=/= ((_.0 _.1)) ((_.2 N)) ((_.2 closure)))
-     (sym _.0 _.1 _.2))))
+    ((lambda (_.0) '()) (sym _.0))
+    ('(_.0 _.1 . _.2)
+     (=/= ((_.0 N)) ((_.0 closure))
+          ((_.1 N)) ((_.1 closure))
+          ((_.2 N)) ((_.2 closure)))
+     (sym _.0 _.1 _.2))
+    ('(_.0 _.1)
+     (=/= ((_.0 N)) ((_.0 closure)) ((_.1 N)) ((_.1 closure)))
+     (sym _.0 _.1))))
+
+
+(test "nfo-lambda-1"
+  (run* (q)
+    (nfo '(lambda (x) x) '() q))
+  '(((lambda (_.0) _.0) (sym _.0))))
+
+(test "nfo-lambda-2"
+  (run* (q)
+    (nfo '(lambda (y) y) '() q))
+  '(((lambda (_.0) _.0) (sym _.0))))
+
+;; open terms are not allowed
+;; TODO try experimenting with the '() to handle open terms
+(test "nfo-lambda-3"
+  (run* (q)
+    (nfo '(lambda (x) y) '() q))
+  '())
+
+(test "nfo-lambda-4"
+  (run* (q)
+    (nfo '(lambda (x) (lambda (y) x)) '() q))
+  '(((lambda (_.0) (lambda (_.1) _.0))
+     (=/= ((_.0 _.1)))
+     (sym _.0 _.1))))
+
+(test "nfo-lambda-5"
+  (run* (q)
+    (nfo '(lambda (x) (lambda (y) y)) '() q))
+  '(((lambda (_.0) (lambda (_.1) _.1))
+     (=/= ((_.0 _.1)))
+     (sym _.0 _.1))))
+
+(test "nfo-lambda-6"
+  (run* (q)
+    (nfo '(lambda (x) (lambda (y) (quote (x . y)))) '() q))
+  '(((lambda (_.0) (lambda (_.1) '(x . y)))
+     (=/= ((_.0 _.1)))
+     (sym _.0 _.1))))
+
+(test "nfo-lambda-7"
+  (run* (q)
+    (nfo '(lambda (x) (lambda (y) (cons x y))) '() q))
+  '(((lambda (_.0) (lambda (_.1) (cons _.0 _.1)))
+     (=/= ((_.0 N)) ((_.0 _.1)) ((_.0 closure)) ((_.1 N))
+          ((_.1 closure)))
+     (sym _.0 _.1))))
+
+(test "nfo-lambda-8"
+  (run* (q)
+    (nfo '(lambda (x) (cons x x)) '() q))
+  '(((lambda (_.0) (cons _.0 _.0))
+     (=/= ((_.0 N)) ((_.0 closure)))
+     (sym _.0))))
+
+(test "nfo-lambda-9"
+  (run* (q)
+    (nfo '(lambda (x) (cons 'cat x)) '() q))
+  '(((lambda (_.0) (cons 'cat _.0))
+     (=/= ((_.0 N)) ((_.0 closure)))
+     (sym _.0))))
+
+(test "nfo-lambda-10"
+  (run* (q)
+    (nfo '(lambda (x) (cons x 'cat)) '() q))
+  '(((lambda (_.0) (cons _.0 'cat))
+     (=/= ((_.0 N)) ((_.0 closure)))
+     (sym _.0))))
+
+(test "nfo-lambda-11"
+  (run* (q)
+    (nfo '(lambda (x) (cons 'cat 'dog)) '() q))
+  '(((lambda (_.0) '(cat . dog))
+     (sym _.0))))
+
+
+(test "eval-expro-lambda-6"
+  (run* (q)
+    (eval-expro '(lambda (x) (lambda (y) (quote (x . y)))) '() q))
+  '((closure (x) (lambda (y) (quote (x . y))) ())))
+
+(test "eval-expro-lambda-7"
+  (run* (q)
+    (eval-expro '(lambda (x) (lambda (y) (cons x y))) '() q))
+  '((closure (x) (lambda (y) (cons x y)) ())))
+
+(test "eval-expro-lambda-8"
+  (run* (q)
+    (eval-expro '(lambda (x) (cons x x)) '() q))
+  '((closure (x) (cons x x) ())))
+
+
+(test "uneval-valueo-lambda-6"
+  (run* (q)
+    (uneval-valueo '() '(closure (x) (lambda (y) (quote (x . y))) ()) q))
+  '(((lambda (_.0) (lambda (_.1) (quote (x . y))))
+     (=/= ((_.0 _.1)))
+     (sym _.0 _.1))))
+
+(test "uneval-valueo-lambda-7"
+  (run* (q)
+    (uneval-valueo '() '(closure (x) (lambda (y) (cons x y)) ()) q))
+  '(((lambda (_.0) (lambda (_.1) (cons _.0 _.1)))
+     (=/= ((_.0 N)) ((_.0 _.1)) ((_.0 closure)) ((_.1 N))
+          ((_.1 closure)))
+     (sym _.0 _.1))))
+
+(test "uneval-valueo-lambda-8"
+  (run* (q)
+    (uneval-valueo '() '(closure (x) (cons x x) ()) q))
+  '(((lambda (_.0) (cons _.0 _.0))
+     (=/= ((_.0 N)) ((_.0 closure)))
+     (sym _.0))))
+
 
 (test "eval-expro-quote-1"
   (run* (val)
@@ -155,20 +296,21 @@
      (=/= ((_.0 N)) ((_.0 closure)))
      (sym _.0))
     (() '())
-    (((_.0 . _.1) '(_.0 . _.1))
-     (absento (N _.0) (N _.1) (closure _.0) (closure _.1)))
     (((N (NVar _.0)) _.0)
+     (sym _.0))
+    (((N (NApp (NVar _.0) _.1)) (_.0 '_.1))
+     (=/= ((_.1 N)) ((_.1 closure)))
+     (sym _.0 _.1))
+    (((N (NApp (NVar _.0) ())) (_.0 '()))
      (sym _.0))
     (((closure (_.0) '_.1 _.2) (lambda (_.3) '_.1))
      (=/= ((_.1 N)) ((_.1 closure)))
      (sym _.0 _.1 _.3))
-    (((N (NApp (NVar _.0) _.1)) (_.0 '_.1))
-     (=/= ((_.1 N)) ((_.1 closure)))
-     (sym _.0 _.1))
     (((closure (_.0) '() _.1) (lambda (_.2) '()))
      (sym _.0 _.2))
-    (((N (NApp (NVar _.0) ())) (_.0 '()))
-     (sym _.0))))
+    (((_.0 . _.1) '(_.0 . _.1))
+     (=/= ((_.0 N)) ((_.0 closure)) ((_.1 N)) ((_.1 closure)))
+     (sym _.0 _.1))))
 
 (test "uneval-valueo-1"
   (run* (expr)

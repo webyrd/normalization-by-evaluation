@@ -54,6 +54,14 @@
       (symbolo x^)
       (absento x^ xs))))
 
+(define not-quotedo
+  (lambda (expr)
+    (conde
+      ((symbolo expr))
+      ((fresh (a d)
+         (== `(,a . ,d) expr)
+         (=/= 'quote a))))))
+
 (define uneval-valueo
   (lambda (xs v expr)
     (conde
@@ -62,11 +70,6 @@
        (=/= 'closure v)
        (=/= 'N v))
       ((== '() v) (== '(quote ()) expr))
-      ((fresh (v1 v2)
-         (== `(,v1 . ,v2) v)
-         (== `(quote (,v1 . ,v2)) expr)
-         (absento 'closure v)
-         (absento 'N v)))
       ((fresh (n)
          (== `(N ,n) v)
          (uneval-neutralo xs n expr)))
@@ -77,7 +80,27 @@
          (symbolo x^)
          (fresho xs x^)
          (eval-expro body `((,x . (N (NVar ,x^))) . ,env) bv)
-         (uneval-valueo `(,x^ . ,xs) bv body^))))))
+         (uneval-valueo `(,x^ . ,xs) bv body^)))
+      ((fresh (v1 v2 e1 e2)
+         (== `(,v1 . ,v2) v)
+         (=/= 'closure v1)
+         (=/= 'N v1)
+         (absento 'closure expr)
+         (absento 'N expr)
+         (conde
+           ((fresh (d1 d2)
+              (== `(quote ,d1) e1)
+              (== `(quote ,d2) e2)
+              (== `(quote (,d1 . ,d2)) expr)))
+           ((== `(cons ,e1 ,e2) expr)
+            (conde
+              ((not-quotedo e1))
+              ((fresh (d1)
+                 (== `(quote ,d1) e1)
+                 (== `(cons ,e1 ,e2) expr)
+                 (not-quotedo e2))))))
+         (uneval-valueo xs v1 e1)
+         (uneval-valueo xs v2 e2))))))
 
 (define uneval-neutralo
   (lambda (xs n expr)
