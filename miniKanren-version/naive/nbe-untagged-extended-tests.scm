@@ -23,6 +23,42 @@
 ;;
 ;; Can we ensure that (lambda (x) (lambda (y) x)) and (lambda (y) (lambda (x) y))
 ;; have the same normal form, and that it differs from (lambda (x) (lambda (y) y))?
+;;
+;; Need to be careful, since 'nfo' will normalize the bodies of
+;; lambdas, etc., which goes beyond alpha-equivalence.  Expressions
+;; that are not alpha-equivalent may have the same normal form.
+;; Can we still do useful and interesting things, given this behavior?
+;; Or, can we use the freshness trick or whatever to implement just the
+;; alpha-equivalence behavior, rather than normalization?
+
+
+(test "nfo-alpha-1"
+  (run* (e)
+    (nfo '(lambda (x) x) '() e)
+    (nfo '(lambda (x) x) '() e))
+  '(((lambda (_.0) _.0)
+     (sym _.0))))
+
+(test "nfo-alpha-2"
+  (run* (e)
+    (nfo '(lambda (x) x) '() e)
+    (nfo '(lambda (y) y) '() e))
+  '(((lambda (_.0) _.0)
+     (sym _.0))))
+
+(test "nfo-alpha-3"
+  (run* (e)
+    (nfo '(lambda (x) (lambda (y) x)) '() e)
+    (nfo '(lambda (x) (lambda (y) x)) '() e))
+  '(((lambda (_.0) (lambda (_.1) _.0))
+     (=/= ((_.0 _.1)))
+     (sym _.0 _.1))))
+
+(test "nfo-alpha-4"
+  (run* (e)
+    (nfo '(lambda (x) (lambda (y) x)) '() e)
+    (nfo '(lambda (x) (lambda (y) y)) '() e))
+  '())
 
 
 (test "main"
