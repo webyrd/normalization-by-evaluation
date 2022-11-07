@@ -91,35 +91,34 @@
 |#
 
 (test "nfo-quine-1"
-  (run 12 (q)
+  (run 14 (q)
     (nfo q '() q))
   '(#f
     #t
+    (_.0
+     (num _.0))
     ('_.0
      (=/= ((_.0 N)) ((_.0 closure)))
      (sym _.0))
     '()
-    ('(_.0 . _.1)
-     (=/= ((_.0 N)) ((_.0 closure)) ((_.1 N)) ((_.1 closure)))
-     (sym _.0 _.1))
-    ('(_.0)
-     (=/= ((_.0 N)) ((_.0 closure)))
-     (sym _.0))
-    ('(() . _.0)
-     (=/= ((_.0 N)) ((_.0 closure)))
-     (sym _.0))
-    '(())
+    '(#f . #f)
     ((lambda (_.0) #f)
      (sym _.0))
+    '(#f . #t)
     ((lambda (_.0) #t)
      (sym _.0))
-    ('(_.0 _.1 . _.2)
-      (=/= ((_.0 N)) ((_.0 closure)) ((_.1 N)) ((_.1 closure))
-           ((_.2 N)) ((_.2 closure)))
-      (sym _.0 _.1 _.2))
+    '(#t . #f)
+    ((lambda (_.0) _.1)
+     (num _.1)
+     (sym _.0))
+    ('(#f . _.0)
+     (num _.0))
     ((lambda (_.0) '_.1)
-      (=/= ((_.1 N)) ((_.1 closure)))
-      (sym _.0 _.1))))
+     (=/= ((_.1 N)) ((_.1 closure)))
+     (sym _.0 _.1))
+    ('(#f . _.0)
+     (=/= ((_.0 N)) ((_.0 closure)))
+     (sym _.0))))
 
 
 (test "nfo-#f-1"
@@ -152,6 +151,65 @@
   (run* (q)
     (nfo '((lambda (x) x) (quote #t)) '() q))
   '(#t))
+
+
+(test "nfo-number-1"
+  (run* (q)
+    (nfo '5 '() q))
+  '(5))
+
+(test "nfo-number-2"
+  (run* (q)
+    (nfo '(quote 5) '() q))
+  '(5))
+
+(test "nfo-number-3"
+  (run* (q)
+    (nfo '(lambda (x) (quote 5)) '() q))
+  '(((lambda (_.0) 5)
+     (sym _.0))))
+
+(test "nfo-number-4"
+  (run* (q)
+    (nfo '(cons 5 6) '() q))
+  '((quote (5 . 6))))
+
+(test "nfo-number-5"
+  (run* (q)
+    (nfo '(cons 5 #f) '() q))
+  '((quote (5 . #f))))
+
+(test "nfo-number-6"
+  (run* (q)
+    (nfo '(cons #f 5) '() q))
+  '((quote (#f . 5))))
+
+(test "nfo-number-7"
+  (run* (q)
+    (nfo '(cons (quote #f) 5) '() q))
+  '((quote (#f . 5))))
+
+(test "nfo-number-8"
+  (run* (q)
+    (nfo '(cons (quote #f) (quote 5)) '() q))
+  '((quote (#f . 5))))
+
+(test "nfo-number-9"
+  (run* (q)
+    (nfo '(cons #f (quote 5)) '() q))
+  '((quote (#f . 5))))
+
+(test "nfo-number-10"
+  (run* (q)
+    (nfo '(lambda (x) (cons 5 (quote 5))) '() q))
+  '(((lambda (_.0) '(5 . 5))
+     (sym _.0))))
+
+(test "nfo-number-11"
+  (run* (q)
+    (nfo '(lambda (x) (cons 5 #f)) '() q))
+  '(((lambda (_.0) '(5 . #f))
+     (sym _.0))))
 
 
 (test "nfo-car-1"
@@ -479,16 +537,18 @@
      (absento (N _.0) (N _.1) (closure _.0) (closure _.1)))
     ((cdr (car '((_.0 (a . b) c . d) . _.1)))
      (absento (N _.0) (N _.1) (closure _.0) (closure _.1)))
-    (cons '(a . b) '(c . d))
     ((car (car (car '(((((a . b) c . d) . _.0) . _.1) . _.2))))
      (absento (N _.0) (N _.1) (N _.2)
               (closure _.0) (closure _.1) (closure _.2)))
-    (car (cons '((a . b) c . d) #f))
     ((cdr (cdr '(_.0 _.1 (a . b) c . d)))
      (absento (N _.0) (N _.1) (closure _.0) (closure _.1)))
     (cdr (cons #f '((a . b) c . d)))
-    (car (cons '((a . b) c . d) #t))
+    (car (cons '((a . b) c . d) #f))
+    (cons '(a . b) '(c . d))
     ((car (car (cdr '(_.0 (((a . b) c . d) . _.1) . _.2))))
+     (absento (N _.0) (N _.1) (N _.2)
+              (closure _.0) (closure _.1) (closure _.2)))
+    ((car (cdr (car '((_.0 ((a . b) c . d) . _.1) . _.2))))
      (absento (N _.0) (N _.1) (N _.2)
               (closure _.0) (closure _.1) (closure _.2)))))
 
@@ -508,10 +568,12 @@
   '((closure (y) x ((x . (closure (z) z ()))))))
 
 (test "uneval-valueo-0"
-  (run 8 (val expr)
+  (run 10 (val expr)
     (uneval-valueo '() val expr))
   '((#f #f)
     (#t #t)
+    ((_.0 _.0)
+     (num _.0))
     ((_.0 '_.0)
      (=/= ((_.0 N)) ((_.0 closure)))
      (sym _.0))
@@ -523,7 +585,9 @@
     (((closure (_.0) #f _.1) (lambda (_.2) #f))
      (sym _.0 _.2))
     (((N (NCdr (NVar _.0))) (cdr _.0))
-     (sym _.0))))
+     (sym _.0))
+    (((closure (_.0) #t _.1) (lambda (_.2) #t))
+     (sym _.0 _.2))))
 
 (test "uneval-valueo-1"
   (run* (expr)

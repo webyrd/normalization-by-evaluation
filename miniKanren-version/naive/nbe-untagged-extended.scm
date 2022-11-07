@@ -18,6 +18,7 @@
     (conde
       ((== #f expr) (== #f val))
       ((== #t expr) (== #t val))
+      ((numbero expr) (== expr val))
       ((== `(quote ,val) expr)
        (absento 'closure val)
        (absento 'N val))
@@ -88,11 +89,17 @@
       (symbolo x^)
       (absento x^ xs))))
 
-(define not-quotedo
+(define quoted-or-self-quotingo
+  (lambda (expr datum)
+    (conde
+      ((== #f expr) (== expr datum))
+      ((== #t expr) (== expr datum))
+      ((numbero expr) (== expr datum))
+      ((== `(quote ,datum) expr)))))
+
+(define not-quoted-and-not-self-quotingo
   (lambda (expr)
     (conde
-      ((== #f expr))
-      ((== #t expr))      
       ((symbolo expr))
       ((fresh (a d)
          (== `(,a . ,d) expr)
@@ -103,6 +110,7 @@
     (conde
       ((== #f v) (== #f expr))
       ((== #t v) (== #t expr))
+      ((numbero v) (== v expr))
       ((symbolo v)
        (== `(quote ,v) expr)
        (=/= 'closure v)
@@ -127,16 +135,15 @@
          (absento 'N expr)
          (conde
            ((fresh (d1 d2)
-              (== `(quote ,d1) e1)
-              (== `(quote ,d2) e2)
-              (== `(quote (,d1 . ,d2)) expr)))
+              (== `(quote (,d1 . ,d2)) expr)
+              (quoted-or-self-quotingo e1 d1)
+              (quoted-or-self-quotingo e2 d2)))
            ((== `(cons ,e1 ,e2) expr)
             (conde
-              ((not-quotedo e1))
+              ((not-quoted-and-not-self-quotingo e1))
               ((fresh (d1)
-                 (== `(quote ,d1) e1)
-                 (== `(cons ,e1 ,e2) expr)
-                 (not-quotedo e2))))))
+                 (quoted-or-self-quotingo e1 d1)
+                 (not-quoted-and-not-self-quotingo e2))))))
          (uneval-valueo xs v1 e1)
          (uneval-valueo xs v2 e2))))))
 
