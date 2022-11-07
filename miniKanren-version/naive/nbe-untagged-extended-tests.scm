@@ -3,6 +3,11 @@
 
 ;; TODO
 ;;
+;; * add `if` and tests for `if`
+;; * add `not-in-envo` to `evalo` to handle shadowing properly
+
+;; TODO
+;;
 ;; Nada Amin wonders (5 November 02022) if (lambda (x) x) and
 ;; (lambda (y) y) will normalize to the same expression.
 ;;
@@ -97,10 +102,10 @@
     #t
     (_.0
      (num _.0))
+    '()
     ('_.0
      (=/= ((_.0 N)) ((_.0 closure)))
      (sym _.0))
-    '()
     '(#f . #f)
     ((lambda (_.0) #f)
      (sym _.0))
@@ -113,12 +118,9 @@
      (sym _.0))
     ('(#f . _.0)
      (num _.0))
-    ((lambda (_.0) '_.1)
-     (=/= ((_.1 N)) ((_.1 closure)))
-     (sym _.0 _.1))
-    ('(#f . _.0)
-     (=/= ((_.0 N)) ((_.0 closure)))
-     (sym _.0))))
+    ((lambda (_.0) '())
+     (sym _.0))
+    '(#f)))
 
 
 (test "nfo-#f-1"
@@ -210,6 +212,136 @@
     (nfo '(lambda (x) (cons 5 #f)) '() q))
   '(((lambda (_.0) '(5 . #f))
      (sym _.0))))
+
+(test "nfo-number-12"
+  (run* (q)
+    (nfo '(lambda (x) (cons 5 (quote ()))) '() q))
+  '(((lambda (_.0) '(5 . ()))
+     (sym _.0))))
+
+
+(test "nfo-null?-0"
+  (run* (q)
+    (nfo '(null? (quote ())) '() q))
+  '(#t))
+
+(test "nfo-null?-1"
+  (run* (q)
+    (nfo '(null? 5) '() q))
+  '(#f))
+
+(test "nfo-null?-2"
+  (run* (q)
+    (nfo '(null? #t) '() q))
+  '(#f))
+
+(test "nfo-null?-3"
+  (run* (q)
+    (nfo '(null? (lambda (x) x)) '() q))
+  '(#f))
+
+(test "nfo-null?-4"
+  (run* (q)
+    (nfo '(null? (cons 3 4)) '() q))
+  '(#f))
+
+(test "nfo-null?-5"
+  (run* (q)
+    (nfo '(null? 'cat) '() q))
+  '(#f))
+
+
+(test "nfo-pair?-0"
+  (run* (q)
+    (nfo '(pair? (quote ())) '() q))
+  '(#f))
+
+(test "nfo-pair?-1"
+  (run* (q)
+    (nfo '(pair? 5) '() q))
+  '(#f))
+
+(test "nfo-pair?-2"
+  (run* (q)
+    (nfo '(pair? #t) '() q))
+  '(#f))
+
+(test "nfo-pair?-3"
+  (run* (q)
+    (nfo '(pair? (lambda (x) x)) '() q))
+  '(#f))
+
+(test "nfo-pair?-4"
+  (run* (q)
+    (nfo '(pair? (cons 3 4)) '() q))
+  '(#t))
+
+(test "nfo-pair?-5"
+  (run* (q)
+    (nfo '(pair? 'cat) '() q))
+  '(#f))
+
+
+(test "nfo-number?-0"
+  (run* (q)
+    (nfo '(number? (quote ())) '() q))
+  '(#f))
+
+(test "nfo-number?-1"
+  (run* (q)
+    (nfo '(number? 5) '() q))
+  '(#t))
+
+(test "nfo-number?-2"
+  (run* (q)
+    (nfo '(number? #t) '() q))
+  '(#f))
+
+(test "nfo-number?-3"
+  (run* (q)
+    (nfo '(number? (lambda (x) x)) '() q))
+  '(#f))
+
+(test "nfo-number?-4"
+  (run* (q)
+    (nfo '(number? (cons 3 4)) '() q))
+  '(#f))
+
+(test "nfo-number?-5"
+  (run* (q)
+    (nfo '(number? 'cat) '() q))
+  '(#f))
+
+
+(test "nfo-symbol?-0"
+  (run* (q)
+    (nfo '(symbol? (quote ())) '() q))
+  '(#f))
+
+(test "nfo-symbol?-1"
+  (run* (q)
+    (nfo '(symbol? 5) '() q))
+  '(#f))
+
+(test "nfo-symbol?-2"
+  (run* (q)
+    (nfo '(symbol? #t) '() q))
+  '(#f))
+
+(test "nfo-symbol?-3"
+  (run* (q)
+    (nfo '(symbol? (lambda (x) x)) '() q))
+  '(#f))
+
+(test "nfo-symbol?-4"
+  (run* (q)
+    (nfo '(symbol? (cons 3 4)) '() q))
+  '(#f))
+
+(test "nfo-symbol?-5"
+  (run* (q)
+    (nfo '(symbol? 'cat) '() q))
+  '(#t))
 
 
 (test "nfo-car-1"
@@ -531,26 +663,26 @@
      (absento (N _.0) (closure _.0)))
     ((cdr '(_.0 (a . b) c . d))
      (absento (N _.0) (closure _.0)))
+    (cons '(a . b) '(c . d))
+    (((lambda (_.0) '((a . b) c . d)) #f)
+     (sym _.0))
     ((car (car '((((a . b) c . d) . _.0) . _.1)))
      (absento (N _.0) (N _.1) (closure _.0) (closure _.1)))
+    (((lambda (_.0) '((a . b) c . d)) #t)
+     (sym _.0))
     ((car (cdr '(_.0 ((a . b) c . d) . _.1)))
      (absento (N _.0) (N _.1) (closure _.0) (closure _.1)))
     ((cdr (car '((_.0 (a . b) c . d) . _.1)))
      (absento (N _.0) (N _.1) (closure _.0) (closure _.1)))
-    ((car (car (car '(((((a . b) c . d) . _.0) . _.1) . _.2))))
-     (absento (N _.0) (N _.1) (N _.2)
-              (closure _.0) (closure _.1) (closure _.2)))
+    (((lambda (_.0) '((a . b) c . d)) _.1)
+     (num _.1)
+     (sym _.0))
     ((cdr (cdr '(_.0 _.1 (a . b) c . d)))
      (absento (N _.0) (N _.1) (closure _.0) (closure _.1)))
     (cdr (cons #f '((a . b) c . d)))
-    (car (cons '((a . b) c . d) #f))
-    (cons '(a . b) '(c . d))
-    ((car (car (cdr '(_.0 (((a . b) c . d) . _.1) . _.2))))
-     (absento (N _.0) (N _.1) (N _.2)
-              (closure _.0) (closure _.1) (closure _.2)))
-    ((car (cdr (car '((_.0 ((a . b) c . d) . _.1) . _.2))))
-     (absento (N _.0) (N _.1) (N _.2)
-              (closure _.0) (closure _.1) (closure _.2)))))
+    (((lambda (_.0) '((a . b) c . d)) '_.1)
+     (sym _.0)
+     (absento (N _.1) (closure _.1)))))
 
 
 (test "eval-expro-1"
@@ -574,17 +706,17 @@
     (#t #t)
     ((_.0 _.0)
      (num _.0))
+    (() '())
     ((_.0 '_.0)
      (=/= ((_.0 N)) ((_.0 closure)))
      (sym _.0))
-    (() '())
     (((N (NVar _.0)) _.0)
      (sym _.0))
-    (((N (NCar (NVar _.0))) (car _.0))
+    (((N (NNull? (NVar _.0))) (null? _.0))
      (sym _.0))
     (((closure (_.0) #f _.1) (lambda (_.2) #f))
      (sym _.0 _.2))
-    (((N (NCdr (NVar _.0))) (cdr _.0))
+    (((N (NPair? (NVar _.0))) (pair? _.0))
      (sym _.0))
     (((closure (_.0) #t _.1) (lambda (_.2) #t))
      (sym _.0 _.2))))
