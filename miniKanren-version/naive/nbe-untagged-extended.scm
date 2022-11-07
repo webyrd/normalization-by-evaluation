@@ -16,6 +16,8 @@
 (define eval-expro
   (lambda (expr env val)
     (conde
+      ((== #f expr) (== #f val))
+      ((== #t expr) (== #t val))
       ((== `(quote ,val) expr)
        (absento 'closure val)
        (absento 'N val))
@@ -57,6 +59,8 @@
 (define not-quotedo
   (lambda (expr)
     (conde
+      ((== #f expr))
+      ((== #t expr))      
       ((symbolo expr))
       ((fresh (a d)
          (== `(,a . ,d) expr)
@@ -65,6 +69,8 @@
 (define uneval-valueo
   (lambda (xs v expr)
     (conde
+      ((== #f v) (== #f expr))
+      ((== #t v) (== #t expr))
       ((symbolo v)
        (== `(quote ,v) expr)
        (=/= 'closure v)

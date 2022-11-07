@@ -71,9 +71,11 @@
 
 
 (test "eval-expro-quine-1"
-  (run 1 (q)
+  (run 3 (q)
     (eval-expro q '() q))
-  '((((lambda (_.0)
+  '(#f
+    #t
+    (((lambda (_.0)
         (cons _.0 (cons (cons 'quote (cons _.0 '())) '())))
       '(lambda (_.0)
          (cons _.0 (cons (cons 'quote (cons _.0 '())) '()))))
@@ -81,28 +83,67 @@
      (sym _.0))))
 
 (test "nfo-quine-1"
-  (run 10 (q)
+  (run 12 (q)
     (nfo q '() q))
-  '(('_.0 (=/= ((_.0 N)) ((_.0 closure))) (sym _.0))
+  '(#f
+    #t
+    ('_.0
+     (=/= ((_.0 N)) ((_.0 closure)))
+     (sym _.0))
     '()
     ('(_.0 . _.1)
      (=/= ((_.0 N)) ((_.0 closure)) ((_.1 N)) ((_.1 closure)))
      (sym _.0 _.1))
-    ('(_.0) (=/= ((_.0 N)) ((_.0 closure))) (sym _.0))
-    ('(() . _.0) (=/= ((_.0 N)) ((_.0 closure))) (sym _.0))
+    ('(_.0)
+     (=/= ((_.0 N)) ((_.0 closure)))
+     (sym _.0))
+    ('(() . _.0)
+     (=/= ((_.0 N)) ((_.0 closure)))
+     (sym _.0))
     '(())
-    ((lambda (_.0) '_.1)
-     (=/= ((_.1 N)) ((_.1 closure)))
-     (sym _.0 _.1))
-    ((lambda (_.0) '()) (sym _.0))
+    ((lambda (_.0) #f)
+     (sym _.0))
+    ((lambda (_.0) #t)
+     (sym _.0))
     ('(_.0 _.1 . _.2)
-     (=/= ((_.0 N)) ((_.0 closure))
-          ((_.1 N)) ((_.1 closure))
-          ((_.2 N)) ((_.2 closure)))
-     (sym _.0 _.1 _.2))
-    ('(_.0 _.1)
-     (=/= ((_.0 N)) ((_.0 closure)) ((_.1 N)) ((_.1 closure)))
-     (sym _.0 _.1))))
+      (=/= ((_.0 N)) ((_.0 closure)) ((_.1 N)) ((_.1 closure))
+           ((_.2 N)) ((_.2 closure)))
+      (sym _.0 _.1 _.2))
+    ((lambda (_.0) '_.1)
+      (=/= ((_.1 N)) ((_.1 closure)))
+      (sym _.0 _.1))))
+
+
+(test "nfo-#f-1"
+  (run* (q)
+    (nfo '#f '() q))
+  '(#f))
+
+(test "nfo-#f-2"
+  (run* (q)
+    (nfo '(quote #f) '() q))
+  '(#f))
+
+(test "nfo-#f-3"
+  (run* (q)
+    (nfo '((lambda (x) x) (quote #f)) '() q))
+  '(#f))
+
+
+(test "nfo-#t-1"
+  (run* (q)
+    (nfo '#t '() q))
+  '(#t))
+
+(test "nfo-#t-2"
+  (run* (q)
+    (nfo '(quote #t) '() q))
+  '(#t))
+
+(test "nfo-#t-3"
+  (run* (q)
+    (nfo '((lambda (x) x) (quote #t)) '() q))
+  '(#t))
 
 
 (test "nfo-lambda-1"
@@ -338,32 +379,31 @@
     (nfo expr
          '()
          '(quote ((a . b) . (c . d)))))
-  '('((a . b) . (c . d))
+  '('((a . b) c . d)
     (cons '(a . b) '(c . d))
-    (((lambda (_.0) '((a . b) . (c . d))) '_.1)
+    (((lambda (_.0) '((a . b) c . d)) #f)
+     (sym _.0))
+    (((lambda (_.0) '((a . b) c . d)) #t)
+     (sym _.0))
+    (((lambda (_.0) (cons '(a . b) '(c . d))) #f)
+     (sym _.0))
+    (((lambda (_.0) '((a . b) c . d)) '_.1)
      (sym _.0)
      (absento (N _.1) (closure _.1)))
-    (cons '(a . b) (cons 'c 'd))
-    (((lambda (_.0) _.0) '((a . b) . (c . d)))
+    (((lambda (_.0) _.0) '((a . b) c . d))
      (sym _.0))
-    (cons (cons 'a 'b) '(c . d))
+    (((lambda (_.0) (cons '(a . b) '(c . d))) #t)
+     (sym _.0))
+    (((lambda (_.0) ((lambda (_.1) '((a . b) c . d)) #f)) #f)
+     (sym _.0 _.1))
+    (cons '(a . b) (cons 'c 'd))
+    (((lambda (_.0) ((lambda (_.1) '((a . b) c . d)) #t)) #f)
+     (sym _.0 _.1))
     (((lambda (_.0) (cons '(a . b) '(c . d))) '_.1)
      (sym _.0)
      (absento (N _.1) (closure _.1)))
-    (((lambda (_.0) '((a . b) . (c . d))) (lambda (_.1) _.2))
-     (sym _.0 _.1))
-    ((cons '(a . b) ((lambda (_.0) '(c . d)) '_.1))
-     (sym _.0)
-     (absento (N _.1) (closure _.1)))
-    (((lambda (_.0) (cons '(a . b) _.0)) '(c . d)) (sym _.0))
-    (((lambda (_.0) (cons '(a . b) '(c . d)))
-      (lambda (_.1) _.2))
-     (sym _.0 _.1))
-    (((lambda (_.0) ((lambda (_.1) '((a . b) . (c . d))) '_.2))
-      '_.3)
-     (sym _.0 _.1)
-     (absento (N _.2) (N _.3) (closure _.2) (closure _.3)))
-    (cons (cons 'a 'b) (cons 'c 'd))))
+    (((lambda (_.0) '((a . b) c . d)) (lambda (_.1) _.2))
+     (sym _.0 _.1))))
 
 
 (test "eval-expro-1"
@@ -383,25 +423,20 @@
 (test "uneval-valueo-0"
   (run 8 (val expr)
     (uneval-valueo '() val expr))
-  '(((_.0 '_.0)
+  '((#f #f)
+    (#t #t)
+    ((_.0 '_.0)
      (=/= ((_.0 N)) ((_.0 closure)))
      (sym _.0))
     (() '())
     (((N (NVar _.0)) _.0)
      (sym _.0))
-    (((N (NApp (NVar _.0) _.1)) (_.0 '_.1))
-     (=/= ((_.1 N)) ((_.1 closure)))
-     (sym _.0 _.1))
-    (((N (NApp (NVar _.0) ())) (_.0 '()))
+    (((N (NApp (NVar _.0) #f)) (_.0 #f))
      (sym _.0))
-    (((closure (_.0) '_.1 _.2) (lambda (_.3) '_.1))
-     (=/= ((_.1 N)) ((_.1 closure)))
-     (sym _.0 _.1 _.3))
-    (((closure (_.0) '() _.1) (lambda (_.2) '()))
-     (sym _.0 _.2))
-    (((_.0 . _.1) '(_.0 . _.1))
-     (=/= ((_.0 N)) ((_.0 closure)) ((_.1 N)) ((_.1 closure)))
-     (sym _.0 _.1))))
+    (((N (NApp (NVar _.0) #t)) (_.0 #t))
+     (sym _.0))
+    (((closure (_.0) #f _.1) (lambda (_.2) #f))
+     (sym _.0 _.2))))
 
 (test "uneval-valueo-1"
   (run* (expr)
