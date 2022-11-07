@@ -834,6 +834,31 @@
   '(#f))
 
 
+#|
+;; This test appears to diverge, presumably
+;; due to the unevaling of self-application.
+(test "eval-expro/uneval-valueo-ZF-1"
+  (run 1 (val expr^)
+    (eval-expro
+     `((lambda (Z)
+         ((lambda (F)
+            (Z F))
+          (lambda (list?)
+            (lambda (l)
+              (if (null? l)
+                  #t
+                  (if (pair? l)
+                      (list? (cdr l))
+                      #f))))))
+       (lambda (f)
+         ((lambda (x) (f (lambda (v) ((x x) v))))
+          (lambda (x) (f (lambda (v) ((x x) v)))))))
+     '()
+     val)
+    (uneval-valueo '() val expr^))
+  '???)
+|#
+
 (test "uneval-valueo-0"
   (run 10 (val expr)
     (uneval-valueo '() val expr))
