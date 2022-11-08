@@ -37,7 +37,6 @@
 ;; Or, can we use the freshness trick or whatever to implement just the
 ;; alpha-equivalence behavior, rather than normalization?
 
-
 (test "nfo-alpha-1"
   (run* (e)
     (nfo '(lambda (x) x) '() e)
@@ -128,6 +127,34 @@
     (run 1 (e)
       (nfo U '() e)))
   '(((lambda (_.0) (_.0 _.0)) (sym _.0))))
+
+(define normalo
+  (lambda (expr)
+    (fresh (v)
+      (uneval-valueo '() v expr)
+      (eval-expro expr '() v))))
+
+(test "normalo-1"
+  (run 10 (q) (normalo q))
+  '(#f
+    #t
+    (_.0 (num _.0))
+    '()
+    ('_.0 (=/= ((_.0 N)) ((_.0 closure))) (sym _.0))
+    ((lambda (_.0) #f) (sym _.0))
+    ((lambda (_.0) #t) (sym _.0))
+    ((lambda (_.0) _.1) (num _.1) (sym _.0))
+    '(#f . #f)
+    ((lambda (_.0) '()) (sym _.0))))
+
+(test "normalo-2"
+  (length (run 100 (q) (normalo q)))
+  100)
+
+(test "normalo-3"
+  (run* (q) (normalo '((lambda (x) (x x)) (lambda (x) (x x)))))
+  '())
+
 
 #|
 ;; `nfo` of Omega seems to diverge.
