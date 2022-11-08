@@ -908,6 +908,12 @@
     (((closure (_.0) #t _.1) (lambda (_.2) #t))
      (sym _.0 _.2))))
 
+(test "uneval-valueo-0b"
+  (length
+    (run 1000 (val expr)
+      (uneval-valueo '() val expr)))
+  1000)
+
 (test "uneval-valueo-1"
   (run* (expr)
     (uneval-valueo '() '(closure (y) x ((x . (closure (z) z ())))) expr))
