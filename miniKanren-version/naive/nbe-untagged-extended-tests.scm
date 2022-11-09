@@ -860,6 +860,37 @@
      val))
   '(#f))
 
+(test "eval-expro-6"
+  (run 5 (l)
+    (eval-expro
+     `((lambda (Z)
+         ((lambda (F)
+            ((Z F) ',l))
+          (lambda (list?)
+            (lambda (l)
+              (if (null? l)
+                  #t
+                  (if (pair? l)
+                      (list? (cdr l))
+                      #f))))))
+       (lambda (f)
+         ((lambda (x) (f (lambda (v) ((x x) v))))
+          (lambda (x) (f (lambda (v) ((x x) v)))))))
+     '()
+     #t))
+  '(()
+    ((_.0) (absento (N _.0) (closure _.0)))
+    ((_.0 _.1)
+      (absento (N _.0) (N _.1) (closure _.0) (closure _.1)))
+    ((_.0 _.1 _.2)
+      (absento
+        (N _.0) (N _.1) (N _.2)
+        (closure _.0) (closure _.1) (closure _.2)))
+    ((_.0 _.1 _.2 _.3)
+      (absento
+        (N _.0) (N _.1) (N _.2) (N _.3)
+        (closure _.0) (closure _.1) (closure _.2) (closure _.3)))))
+
 
 #|
 ;; This test appears to diverge, presumably
