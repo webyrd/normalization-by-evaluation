@@ -1,6 +1,60 @@
 (load "nbe-untagged-extended.scm")
 (load "../faster-miniKanren/test-check.scm")
 
+(test "foo-1"
+  (run* (expr)
+    (nfo '(lambda (x) ((lambda (y) y) 5))
+         '()
+         expr))
+  '(((lambda (_.0) 5) (sym _.0))))
+
+(test "foo-2"
+  (run* (val)
+    (eval-expro '(lambda (x) ((lambda (y) y) 5))
+                '()
+                val))
+  '((closure (x) ((lambda (y) y) 5) ())))
+
+(test "foo-3"
+  (run* (env val)
+    (eval-expro '(lambda (x) ((lambda (y) y) 5))
+                env
+                val))
+  '((_.0 (closure (x) ((lambda (y) y) 5) _.0))))
+
+(test "foo-4"
+  (run* (val)
+    (eval-expro '((lambda (x) (lambda (y) x)) 5)
+                '()
+                val))
+  '((closure (y) x ((x . 5)))))
+
+(test "foo-5"
+  (run 1 (env val)
+    (eval-expro '(cons x 5)
+                env
+                val))
+  '((((x . _.0) . _.1) (_.0 . 5))))
+
+;; cons doesn't show this behavior, since it is a constructor not a destructor
+(run 2 (env val)
+    (eval-expro '(car x)
+                env
+                val))
+'(((((x _.0 . _.1) . _.2) _.0)
+   (=/= ((_.0 N)) ((_.0 closure))))
+  (((x N _.0) . _.1) (N (NCar _.0))))
+
+(run 2 (env val)
+    (eval-expro '(x 1)
+                env
+                val))
+'((((x N _.0) . _.1) (N (NApp _.0 1)))
+  ((((x closure (_.0) #f _.1) . _.2) #f) (sym _.0)))
+> 
+
+
+
 ;; TODO
 ;;
 ;; * figure out if `nfo` Z combinator should diverge...
