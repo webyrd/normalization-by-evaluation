@@ -52,19 +52,26 @@
        (eval-listo rands env a*)
        (apply-proco proc a* env val)))
 
-    ((handle-matcho expr env val))
+    ;; TODO handle commented cases, below:
+    ;; add neutral terms,  and uneval these terms,
+    ;; as appropriate
+    ;;
+    ;; `letrec` is the most important of the
+    ;; commented cases
+    
+    #;((handle-matcho expr env val))
 
-    ((fresh (begin-body)
+    #;((fresh (begin-body)
        (== `(begin . ,begin-body) expr)
        (not-in-envo 'begin env)
        (eval-begino '() begin-body env val)))
 
-    ((fresh (b* letrec-body)
+    #;((fresh (b* letrec-body)
        (== `(letrec ,b* ,letrec-body) expr)
        (not-in-envo 'letrec env)
        (eval-letreco b* letrec-body env val)))
 
-    ((fresh (b* body)
+    #;((fresh (b* body)
        (== `(let ,b* ,body) expr)
        (not-in-envo 'let env)
        (let loop ((b* b*) (p* '()) (rand* '()))
@@ -79,7 +86,7 @@
               (symbolo p)
               (loop b*-rest (cons p p*) (cons rand rand*))))))))
 
-    ((fresh (b* body)
+    #;((fresh (b* body)
        (== `(let* ,b* ,body) expr)
        (not-in-envo 'let env)
        (let loop ((b* b*) (env env))
@@ -92,12 +99,12 @@
               (loop b*-rest res)
               (eval-expro rand env a)))))))
 
-    ((fresh (qq-expr)
+    #;((fresh (qq-expr)
        (== (list 'quasiquote qq-expr) expr)
        (not-in-envo 'quasiquote env)
        (eval-qq-expo 0 qq-expr env val)))
 
-    ((cond-primo expr env val))
+    #;((cond-primo expr env val))
 
     ((prim-expo expr env val))))
 
@@ -164,7 +171,7 @@
        (=/= p-name x)
        (not-in-env-reco x b*-rest env)))))
 
-(define (eval-letreco b* letrec-body env val)
+#;(define (eval-letreco b* letrec-body env val)
   (let loop ((b* b*) (rb* '()))
     (conde
       ((== '() b*) (eval-expro letrec-body `((rec . ,rb*) . ,env) val))
@@ -175,7 +182,7 @@
          (loop b*-rest `((,p-name . (lambda ,x ,body)) . ,rb*)))))))
 
 ;; NOTE: rec-defs is Scheme state, not a logic term!
-(define (eval-begino rec-defs begin-body env val)
+#;(define (eval-begino rec-defs begin-body env val)
   (conde
     ((fresh (e)
         (== `(,e) begin-body)
@@ -189,7 +196,7 @@
           (cons `(,name (lambda ,args ,body)) rec-defs) begin-rest env val)))))
 
 ;; 'level' is non-relational.
-(define (eval-qq-expo level qq-expr env val)
+#;(define (eval-qq-expo level qq-expr env val)
   (conde
     ((fresh (expr)
        (== (list 'unquote expr) qq-expr)
@@ -237,6 +244,7 @@
     ; Variadic
     ((symbolo params))))
 
+;; TODO can this be replaced with a single `absento` call?
 (define (not-in-paramso x params)
   (conde
     ((== '() params))
@@ -370,22 +378,31 @@
 (define (prim-expo expr env val)
   (conde
     ((boolean-primo expr env val))
-    ((and-primo expr env val))
-    ((or-primo expr env val))
-    ((if-primo expr env val))))
+
+    ;; TODO handle commented cases, below:
+    ;; add neutral terms,  and uneval these terms,
+    ;; as appropriate
+    ;;
+    ;; `if` is the most important of the
+    ;; commented cases
+    
+    #;((and-primo expr env val))
+    #;((or-primo expr env val))
+    #;((if-primo expr env val))
+    ))
 
 (define (boolean-primo expr env val)
   (conde
     ((== #t expr) (== #t val))
     ((== #f expr) (== #f val))))
 
-(define (and-primo expr env val)
+#;(define (and-primo expr env val)
   (fresh (e*)
     (== `(and . ,e*) expr)
     (not-in-envo 'and env)
     (ando e* env val)))
 
-(define (ando e* env val)
+#;(define (ando e* env val)
   (conde
     ((== '() e*) (== #t val))
     ((fresh (e)
@@ -401,13 +418,13 @@
           (eval-expro e1 env v)
           (ando `(,e2 . ,e-rest) env val)))))))
 
-(define (or-primo expr env val)
+#;(define (or-primo expr env val)
   (fresh (e*)
     (== `(or . ,e*) expr)
     (not-in-envo 'or env)
     (oro e* env val)))
 
-(define (oro e* env val)
+#;(define (oro e* env val)
   (conde
     ((== '() e*) (== #f val))
     ((fresh (e)
@@ -423,7 +440,7 @@
           (eval-expro e1 env v)
           (oro `(,e2 . ,e-rest) env val)))))))
 
-(define (if-primo expr env val)
+#;(define (if-primo expr env val)
   (fresh (e1 e2 e3 t)
     (== `(if ,e1 ,e2 ,e3) expr)
     (not-in-envo 'if env)
@@ -432,13 +449,13 @@
       ((=/= #f t) (eval-expro e2 env val))
       ((== #f t) (eval-expro e3 env val)))))
 
-(define (cond-primo expr env val)
+#;(define (cond-primo expr env val)
   (fresh (c c*)
     (== `(cond ,c . ,c*) expr)
     (not-in-envo 'cond env)
     (cond-clauseso `(,c . ,c*) env val)))
 
-(define (cond-clauseso c* env val)
+#;(define (cond-clauseso c* env val)
   (conde
     ((== '() c*) (== undefined-tag val))
     ((fresh (conseq)
@@ -467,7 +484,7 @@
                       (val . (procedure? . (,prim-tag . procedure?)))
                       . ,empty-env))
 
-(define handle-matcho
+#;(define handle-matcho
   (lambda  (expr env val)
     (fresh (against-expr mval clause clauses)
       (== `(match ,against-expr ,clause . ,clauses) expr)
@@ -475,7 +492,7 @@
       (eval-expro against-expr env mval)
       (match-clauses mval `(,clause . ,clauses) env val))))
 
-(define (not-symbolo t)
+#;(define (not-symbolo t)
   (conde
     ((== #f t))
     ((== #t t))
@@ -484,7 +501,7 @@
     ((fresh (a d)
        (== `(,a . ,d) t)))))
 
-(define (not-numbero t)
+#;(define (not-numbero t)
   (conde
     ((== #f t))
     ((== #t t))
@@ -493,12 +510,12 @@
     ((fresh (a d)
        (== `(,a . ,d) t)))))
 
-(define (self-eval-literalo t)
+#;(define (self-eval-literalo t)
   (conde
     ((numbero t))
     ((booleano t))))
 
-(define (literalo t)
+#;(define (literalo t)
   (conde
     ((numbero t))
     ((symbolo t)
@@ -508,12 +525,12 @@
     ((booleano t))
     ((== '() t))))
 
-(define (booleano t)
+#;(define (booleano t)
   (conde
     ((== #f t))
     ((== #t t))))
 
-(define (regular-env-appendo env1 env2 env-out)
+#;(define (regular-env-appendo env1 env2 env-out)
   (conde
     ((== empty-env env1) (== env2 env-out))
     ((fresh (y v rest res)
@@ -521,7 +538,7 @@
        (== `((val . (,y . ,v)) . ,res) env-out)
        (regular-env-appendo rest env2 res)))))
 
-(define (match-clauses mval clauses env val)
+#;(define (match-clauses mval clauses env val)
   (fresh (p result-expr d penv)
     (== `((,p ,result-expr) . ,d) clauses)
     (conde
@@ -532,7 +549,7 @@
       ((p-no-match p mval '() penv)
        (match-clauses mval d env val)))))
 
-(define (var-p-match var mval penv penv-out)
+#;(define (var-p-match var mval penv penv-out)
   (fresh (val)
     (symbolo var)
     (=/= closure-tag mval)
@@ -545,14 +562,14 @@
       ((== `((val . (,var . ,mval)) . ,penv) penv-out)
        (not-in-envo var penv)))))
 
-(define (var-p-no-match var mval penv penv-out)
+#;(define (var-p-no-match var mval penv penv-out)
   (fresh (val)
     (symbolo var)
     (=/= mval val)
     (== penv penv-out)
     (lookupo var penv val)))
 
-(define (p-match p mval penv penv-out)
+#;(define (p-match p mval penv penv-out)
   (conde
     ((self-eval-literalo p)
      (== p mval)
@@ -574,7 +591,7 @@
       (== (list 'quasiquote quasi-p) p)
       (quasi-p-match quasi-p mval penv penv-out)))))
 
-(define (p-no-match p mval penv penv-out)
+#;(define (p-no-match p mval penv penv-out)
   (conde
     ((self-eval-literalo p)
      (=/= p mval)
@@ -603,7 +620,7 @@
       (== (list 'quasiquote quasi-p) p)
       (quasi-p-no-match quasi-p mval penv penv-out)))))
 
-(define (quasi-p-match quasi-p mval penv penv-out)
+#;(define (quasi-p-match quasi-p mval penv penv-out)
   (conde
     ((== quasi-p mval)
      (== penv penv-out)
@@ -618,7 +635,7 @@
        (quasi-p-match a v1 penv penv^)
        (quasi-p-match d v2 penv^ penv-out)))))
 
-(define (quasi-p-no-match quasi-p mval penv penv-out)
+#;(define (quasi-p-no-match quasi-p mval penv penv-out)
   (conde
     ((=/= quasi-p mval)
      (== penv penv-out)
@@ -752,45 +769,9 @@
 ;; as a single neutral term that includes the prim op name
 (define uneval-neutralo
   (lambda (xs n expr)
-    (conde
-      ((== `(NVar ,expr) n)
-       (symbolo expr))
-      ((fresh (n1 e1)
-         (== `(NNull? ,n1) n)
-         (== `(null? ,e1) expr)
-         (uneval-neutralo xs n1 e1)))
-      ((fresh (n1 e1)
-         (== `(NPair? ,n1) n)
-         (== `(pair? ,e1) expr)
-         (uneval-neutralo xs n1 e1)))
-      ((fresh (n1 e1)
-         (== `(NNumber? ,n1) n)
-         (== `(number? ,e1) expr)
-         (uneval-neutralo xs n1 e1)))
-      ((fresh (n1 e1)
-         (== `(NSymbol? ,n1) n)
-         (== `(symbol? ,e1) expr)
-         (uneval-neutralo xs n1 e1)))
-      ((fresh (n1 e1)
-         (== `(NCar ,n1) n)
-         (== `(car ,e1) expr)
-         (uneval-neutralo xs n1 e1)))
-      ((fresh (n1 e1)
-         (== `(NCdr ,n1) n)
-         (== `(cdr ,e1) expr)
-         (uneval-neutralo xs n1 e1)))
-      ((fresh (n^ v ne ve)
-         ;; TODO fixme
-         (== `(NApp ,n^ ,v) n)
-         (== `(,ne ,ve) expr)
-         (uneval-neutralo xs n^ ne)
-         (uneval-valueo xs v ve)))
-      ((fresh (n1 v2 v3 e1 e2 e3)
-         (== `(NIf ,n1 ,v2 ,v3) n)
-         (== `(if ,e1 ,e2 ,e3) expr)
-         (uneval-neutralo xs n1 e1)
-         (uneval-valueo xs v2 e2)
-         (uneval-valueo xs v3 e3))))))
+    ;; TODO implement me!
+    'TODO
+    ))
 
 (define ext-env-neutral*o
   (lambda (x* x*^ env env^ xs xs^)
