@@ -71,7 +71,7 @@
        (not-in-envo 'letrec env)
        (eval-letreco b* letrec-body env val)))
 
-    #;((fresh (b* body)
+    ((fresh (b* body)
        (== `(let ,b* ,body) expr)
        (not-in-envo 'let env)
        (let loop ((b* b*) (p* '()) (rand* '()))
