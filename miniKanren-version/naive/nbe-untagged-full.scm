@@ -286,12 +286,16 @@
        (=/= closure-tag a)
        (=/= prim-tag a)
        (=/= neutral-tag a))]
-    #;[(== prim-id 'car)
-     (fresh (d)
-       (== `((,val . ,d)) a*)
-       (=/= closure-tag val)
-       (=/= prim-tag val)
-       (=/= neutral-tag val))]
+    [(== prim-id 'car)
+     (conde
+       ((fresh (d)
+          (== `((,val . ,d)) a*)
+          (=/= closure-tag val)
+          (=/= prim-tag val)
+          (=/= neutral-tag val)))
+       ((fresh (n)
+         (== `(,neutral-tag ,n) a*)
+         (== `(,neutral-tag (NCar ,n)) val))))]
     #;[(== prim-id 'cdr)
      (fresh (a)
        (== `((,a . ,val)) a*)
