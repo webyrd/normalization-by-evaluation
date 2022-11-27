@@ -512,15 +512,12 @@
     ((boolean-primo expr env val))
 
     ;; TODO handle commented cases, below:
-    ;; add neutral terms,  and uneval these terms,
+    ;; add neutral terms, and uneval these terms,
     ;; as appropriate
-    ;;
-    ;; `if` is the most important of the
-    ;; commented cases
     
     #;((and-primo expr env val))
     #;((or-primo expr env val))
-    #;((if-primo expr env val))
+    ((if-primo expr env val))
     ))
 
 (define (boolean-primo expr env val)
@@ -572,14 +569,19 @@
           (eval-expro e1 env v)
           (oro `(,e2 . ,e-rest) env val)))))))
 
-#;(define (if-primo expr env val)
-  (fresh (e1 e2 e3 t)
+(define (if-primo expr env val)
+  (fresh (e1 e2 e3 v1)
     (== `(if ,e1 ,e2 ,e3) expr)
     (not-in-envo 'if env)
-    (eval-expro e1 env t)
+    (eval-expro e1 env v1)
     (conde
-      ((=/= #f t) (eval-expro e2 env val))
-      ((== #f t) (eval-expro e3 env val)))))
+      ((== #f v1) (eval-expro e3 env val))
+      ((non-falseo v1) (eval-expro e2 env val))
+      ((fresh (n1 v2 v3)
+         (== `(,neutral-tag ,n1) v1)
+         (== `(,neutral-tag (NIf ,n1 ,v2 ,v3)) val)
+         (eval-expro e2 env v2)
+         (eval-expro e3 env v3))))))
 
 #;(define (cond-primo expr env val)
   (fresh (c c*)
