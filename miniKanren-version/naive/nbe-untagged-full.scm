@@ -279,7 +279,7 @@
   (conde
     ;; TODO finish implementing the commented clauses
     ;;
-    [(== prim-id 'cons)
+    [(== prim-id 'cons)     
      (fresh (a d)
        (== `(,a ,d) a*)
        (== `(,a . ,d) val)
@@ -287,31 +287,38 @@
        (=/= prim-tag a)
        (=/= neutral-tag a))]
     [(== prim-id 'car)
-     (conde
-       ((fresh (d)
-          (== `((,val . ,d)) a*)
-          (=/= closure-tag val)
-          (=/= prim-tag val)
-          (=/= neutral-tag val)))
-       ((fresh (n)
-          (== `(,neutral-tag ,n) a*)
-          (== `(,neutral-tag (NCar ,n)) val))))]
+     (fresh (v)
+       (== `(,v) a*)
+       (conde
+         ((fresh (d)
+            (== `(,val . ,d) v)
+            (=/= closure-tag val)
+            (=/= prim-tag val)
+            (=/= neutral-tag val)))
+         ((fresh (n)
+            (== `(,neutral-tag ,n) v)
+            (== `(,neutral-tag (NCar ,n)) val)))))]
     [(== prim-id 'cdr)
-     (conde
-       ((fresh (a)
-          (== `((,a . ,val)) a*)
-          (=/= closure-tag a)
-          (=/= prim-tag a)
-          (=/= neutral-tag a)))
-       ((fresh (n)
-          (== `(,neutral-tag ,n) a*)
-          (== `(,neutral-tag (NCdr ,n)) val))))]
-    #;[(== prim-id 'not)
+     (fresh (v)
+       (== `(,v) a*)
+       (conde
+         ((fresh (a)
+            (== `(,a . ,val) v)
+            (=/= closure-tag a)
+            (=/= prim-tag a)
+            (=/= neutral-tag a)))
+         ((fresh (n)
+            (== `(,neutral-tag ,n) v)
+            (== `(,neutral-tag (NCdr ,n)) val)))))]
+    [(== prim-id 'not)
      (fresh (b)
        (== `(,b) a*)
        (conde
          ((=/= #f b) (== #f val))
-         ((== #f b) (== #t val))))]
+         ((== #f b) (== #t val))
+         ((fresh (n)
+            (== `(,neutral-tag ,n) b)
+            (== `(,neutral-tag (NNot ,n)) val)))))]
     #;[(== prim-id 'equal?)
      (fresh (v1 v2)
        (== `(,v1 ,v2) a*)
