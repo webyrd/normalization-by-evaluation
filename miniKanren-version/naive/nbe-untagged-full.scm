@@ -633,6 +633,8 @@
       (eval-expro against-expr env mval)
       (match-clauses mval `(,clause . ,clauses) env val))))
 
+;; TODO this version may be obsolete--please compare with the new
+;; helpers, above
 #;(define (not-symbolo t)
   (conde
     ((== #f t))
@@ -642,6 +644,8 @@
     ((fresh (a d)
        (== `(,a . ,d) t)))))
 
+;; TODO this version may be obsolete--please compare with the new
+;; helpers, above
 #;(define (not-numbero t)
   (conde
     ((== #f t))
@@ -651,11 +655,15 @@
     ((fresh (a d)
        (== `(,a . ,d) t)))))
 
+;; TODO this version may be obsolete--please compare with the new
+;; helpers, above
 #;(define (self-eval-literalo t)
   (conde
     ((numbero t))
     ((booleano t))))
 
+;; TODO this version may be obsolete--please compare with the new
+;; helpers, above
 #;(define (literalo t)
   (conde
     ((numbero t))
