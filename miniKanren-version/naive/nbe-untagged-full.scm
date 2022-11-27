@@ -477,6 +477,9 @@
      (fresh (v)
        (== `(,v) a*)
        (conde
+         ((fresh (n)
+            (== `(,neutral-tag ,n) v)
+            (== `(,neutral-tag (NNull? ,n)) val)))         
          ((pair-valueo v) (== #f val))
          ((== '() v) (== #t val))
          ((== #f val) (non-nullo v))))]
