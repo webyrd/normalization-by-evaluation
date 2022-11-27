@@ -408,7 +408,6 @@
 
 (define (eval-primo prim-id a* val)
   (conde
-    ;; TODO finish implementing the commented clauses
     [(== prim-id 'cons)
      (fresh (a d)
        (== `(,a ,d) a*)
@@ -449,12 +448,27 @@
             (== `(,neutral-tag (NNot ,n)) val)))
          ((== #f b) (== #t val))
          ((== #f val) (non-falseo b))))]
-    #;[(== prim-id 'equal?)
+    [(== prim-id 'equal?)
      (fresh (v1 v2)
        (== `(,v1 ,v2) a*)
        (conde
-         ((== v1 v2) (== #t val))
-         ((=/= v1 v2) (== #f val))))]
+         ((fresh (n1 n2)
+            (== `(,neutral-tag ,n1) v1)
+            (== `(,neutral-tag ,n2) v2)
+            (== `(,neutral-tag (NEqual?n/n ,n1 ,n2)) val)))
+         ((fresh (n1)
+            (== `(,neutral-tag ,n1) v1)
+            (== `(,neutral-tag (NEqual?n/v ,n1 ,v2)) val)
+            (valueo v2)))
+         ((fresh (n1)
+            (== `(,neutral-tag ,n2) v2)
+            (== `(,neutral-tag (NEqual?v/n ,v1 ,n2)) val)
+            (valueo v1)))
+         ((conde
+            ((== v1 v2) (== #t val))
+            ((=/= v1 v2) (== #f val)))
+          (valueo v1)
+          (valueo v2))))]
     [(== prim-id 'symbol?)
      (fresh (v)
        (== `(,v) a*)
