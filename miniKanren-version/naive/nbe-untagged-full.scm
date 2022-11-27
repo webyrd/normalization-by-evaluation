@@ -524,15 +524,9 @@
 (define (prim-expo expr env val)
   (conde
     ((boolean-primo expr env val))
-
-    ;; TODO handle commented cases, below:
-    ;; add neutral terms, and uneval these terms,
-    ;; as appropriate
-    
     ((and-primo expr env val))
-    #;((or-primo expr env val))
-    ((if-primo expr env val))
-    ))
+    ((or-primo expr env val))
+    ((if-primo expr env val))))
 
 (define (boolean-primo expr env val)
   (conde
@@ -551,7 +545,7 @@
     ((fresh (e)
        (== `(,e) e*)
        (eval-expro e env val)))
-    ((fresh (e1 e2 e-rest v)
+    ((fresh (e1 e2 e-rest v1)
        (== `(,e1 ,e2 . ,e-rest) e*)
        (eval-expro e1 env v1)
        (conde
@@ -562,26 +556,27 @@
          ((non-falseo v1)
           (ando `(,e2 . ,e-rest) env val)))))))
 
-#;(define (or-primo expr env val)
+(define (or-primo expr env val)
   (fresh (e*)
     (== `(or . ,e*) expr)
     (not-in-envo 'or env)
     (oro e* env val)))
 
-#;(define (oro e* env val)
+(define (oro e* env val)
   (conde
     ((== '() e*) (== #f val))
     ((fresh (e)
        (== `(,e) e*)
        (eval-expro e env val)))
-    ((fresh (e1 e2 e-rest v)
+    ((fresh (e1 e2 e-rest v1)
        (== `(,e1 ,e2 . ,e-rest) e*)
+       (eval-expro e1 env v1)
        (conde
-         ((=/= #f v)
-          (== v val)
-          (eval-expro e1 env v))
-         ((== #f v)
-          (eval-expro e1 env v)
+         ((fresh (n)
+            (== `(,neutral-tag ,n) v1)
+            (== `(,neutral-tag (NOr ,n `(,e2 . ,e-rest))) val)))
+         ((== v1 val) (non-falseo v1))
+         ((== #f v1)
           (oro `(,e2 . ,e-rest) env val)))))))
 
 (define (if-primo expr env val)
