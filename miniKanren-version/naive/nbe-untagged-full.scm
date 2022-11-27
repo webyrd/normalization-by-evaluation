@@ -86,7 +86,7 @@
               (symbolo p)
               (loop b*-rest (cons p p*) (cons rand rand*))))))))
 
-    #;((fresh (b* body)
+    ((fresh (b* body)
        (== `(let* ,b* ,body) expr)
        (not-in-envo 'let env)
        (let loop ((b* b*) (env env))
