@@ -55,9 +55,6 @@
     ;; TODO handle commented cases, below:
     ;; add neutral terms,  and uneval these terms,
     ;; as appropriate
-    ;;
-    ;; `letrec` is the most important of the
-    ;; commented cases
     
     #;((handle-matcho expr env val))
 
@@ -66,7 +63,7 @@
        (not-in-envo 'begin env)
        (eval-begino '() begin-body env val)))
 
-    #;((fresh (b* letrec-body)
+    ((fresh (b* letrec-body)
        (== `(letrec ,b* ,letrec-body) expr)
        (not-in-envo 'letrec env)
        (eval-letreco b* letrec-body env val)))
@@ -134,13 +131,13 @@
 (define empty-env '())
 
 (define (lookup-reco k renv x b* t)
-    (conde
-      ((== '() b*) (k))
-      ((fresh (b*-rest p-name lam-expr)
-         (== `((,p-name . ,lam-expr) . ,b*-rest) b*)
-         (conde
-           ((== p-name x) (== `(,closure-tag ,lam-expr ,renv) t))
-           ((=/= p-name x) (lookup-reco k renv x b*-rest t)))))))
+  (conde
+    ((== '() b*) (k))
+    ((fresh (b*-rest p-name lam-expr)
+       (== `((,p-name . ,lam-expr) . ,b*-rest) b*)
+       (conde
+         ((== p-name x) (== `(,closure-tag ,lam-expr ,renv) t))
+         ((=/= p-name x) (lookup-reco k renv x b*-rest t)))))))
 (define (lookupo x env t)
   (conde
     ((fresh (y b rest)
@@ -171,7 +168,7 @@
        (=/= p-name x)
        (not-in-env-reco x b*-rest env)))))
 
-#;(define (eval-letreco b* letrec-body env val)
+(define (eval-letreco b* letrec-body env val)
   (let loop ((b* b*) (rb* '()))
     (conde
       ((== '() b*) (eval-expro letrec-body `((rec . ,rb*) . ,env) val))
