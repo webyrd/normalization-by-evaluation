@@ -529,7 +529,7 @@
     ;; add neutral terms, and uneval these terms,
     ;; as appropriate
     
-    #;((and-primo expr env val))
+    ((and-primo expr env val))
     #;((or-primo expr env val))
     ((if-primo expr env val))
     ))
@@ -539,13 +539,13 @@
     ((== #t expr) (== #t val))
     ((== #f expr) (== #f val))))
 
-#;(define (and-primo expr env val)
+(define (and-primo expr env val)
   (fresh (e*)
     (== `(and . ,e*) expr)
     (not-in-envo 'and env)
     (ando e* env val)))
 
-#;(define (ando e* env val)
+(define (ando e* env val)
   (conde
     ((== '() e*) (== #t val))
     ((fresh (e)
@@ -553,12 +553,13 @@
        (eval-expro e env val)))
     ((fresh (e1 e2 e-rest v)
        (== `(,e1 ,e2 . ,e-rest) e*)
+       (eval-expro e1 env v1)
        (conde
-         ((== #f v)
-          (== #f val)
-          (eval-expro e1 env v))
-         ((=/= #f v)
-          (eval-expro e1 env v)
+         ((fresh (n)
+            (== `(,neutral-tag ,n) v1)
+            (== `(,neutral-tag (NAnd ,n `(,e2 . ,e-rest))) val)))
+         ((== #f v1) (== #f val))
+         ((non-falseo v1)
           (ando `(,e2 . ,e-rest) env val)))))))
 
 #;(define (or-primo expr env val)
