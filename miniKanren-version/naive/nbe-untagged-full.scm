@@ -273,10 +273,13 @@
        (ext-env*o dx* da* env2 out)))))
 
 (define (eval-primo prim-id a* val)
+  ;; TODO really need some abstractions to make
+  ;; the case analyses shorter, more readable,
+  ;; and less error-prone.
   (conde
     ;; TODO finish implementing the commented clauses
     ;;
-    #;[(== prim-id 'cons)
+    [(== prim-id 'cons)
      (fresh (a d)
        (== `(,a ,d) a*)
        (== `(,a . ,d) val)
