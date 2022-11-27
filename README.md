@@ -17,7 +17,7 @@ During a hacking session with Michael Ballantyne, Michael found and fixed a subt
 Nada Amin asked whether, using this "naive" freshness technique, `(lambda (x) x)` and `(lambda (y) y)` normalize to the name expression.  This led to a conversation about using nbe using the "naive" freshness implementation for nominal-logic style relational programming.
 
 
-Currently the most interesting relational versions seem to be the "naive" versions, especially `miniKanren-version/naive/nbe-untagged.scm` and `miniKanren-version/naive/nbe-untagged-extended.scm`.
+Currently the most interesting relational versions seem to be the "naive" versions, especially `miniKanren-version/naive/nbe-untagged.scm` and `miniKanren-version/naive/nbe-untagged-extended.scm`.  The `miniKanren-version/naive/nbe-untagged-full.scm` interpreter is work-in-progress, but (hopefully!) will eventually contain the entire unoptimized Barliman-style relational interpeter.
 
 The nominal logic programming version of nbe using alphaKanren does not seem to work fully relationally.  Also, I think the implementation of alphaKanren itself may rely on a subtle use of `eq?` which is sound in R5RS, but whose behavior is undefined in R6RS.  Beware!  If anything, this code is probably most useful for trying to understand possible issues and limitations with relational programming in alphaKanren, since I've never gotten this style of interpreter to work fully relationally.
 
