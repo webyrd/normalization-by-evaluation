@@ -272,14 +272,144 @@
        (symbolo x)
        (ext-env*o dx* da* env2 out)))))
 
+(define atomic-valueo
+  (lambda (v)
+    (conde
+      ((== '() v))
+      ((symbolo v))
+      ((== #f v))
+      ((== #t v))
+      ((numbero v))
+      ((fresh (d) (== `(,closure-tag . ,d) v)))
+      ((fresh (d) (== `(,prim-tag . ,d) v))))))
+
+(define pair-valueo
+  (lambda (v)
+    (fresh (a d)
+      (== `(,a . ,d) v)
+      (=/= closure-tag a)
+      (=/= prim-tag a)
+      (=/= neutral-tag a))))
+
+(define procedureo
+  (lambda (v)
+    (conde
+      ((fresh (d) (== `(,closure-tag . ,d) v)))
+      ((fresh (d) (== `(,prim-tag . ,d) v))))))
+
+(define valueo
+  (lambda (v)
+    (conde
+      ((== '() v))
+      ((symbolo v))
+      ((== #f v))
+      ((== #t v))
+      ((numbero v))
+      ((fresh (d) (== `(,closure-tag . ,d) v)))
+      ((fresh (d) (== `(,prim-tag . ,d) v)))
+      ((fresh (a d)
+         (== `(,a . ,d) v)
+         (=/= closure-tag a)
+         (=/= prim-tag a)
+         (=/= neutral-tag a))))))
+
+(define non-nullo
+  (lambda (v)
+    (conde
+      ((symbolo v))
+      ((== #f v))
+      ((== #t v))
+      ((numbero v))
+      ((fresh (d) (== `(,closure-tag . ,d) v)))
+      ((fresh (d) (== `(,prim-tag . ,d) v)))
+      ((fresh (a d)
+         (== `(,a . ,d) v)
+         (=/= closure-tag a)
+         (=/= prim-tag a)
+         (=/= neutral-tag a))))))
+
+(define non-symbolo
+  (lambda (v)
+    (conde
+      ((== '() v))
+      ((== #f v))
+      ((== #t v))
+      ((numbero v))
+      ((fresh (d) (== `(,closure-tag . ,d) v)))
+      ((fresh (d) (== `(,prim-tag . ,d) v)))
+      ((fresh (a d)
+         (== `(,a . ,d) v)
+         (=/= closure-tag a)
+         (=/= prim-tag a)
+         (=/= neutral-tag a))))))
+
+(define non-booleano
+  (lambda (v)
+    (conde
+      ((== '() v))
+      ((symbolo v))
+      ((numbero v))
+      ((fresh (d) (== `(,closure-tag . ,d) v)))
+      ((fresh (d) (== `(,prim-tag . ,d) v)))
+      ((fresh (a d)
+         (== `(,a . ,d) v)
+         (=/= closure-tag a)
+         (=/= prim-tag a)
+         (=/= neutral-tag a))))))
+
+(define non-falseo
+  (lambda (v)
+    (conde
+      ((== '() v))
+      ((symbolo v))
+      ((== #t v))
+      ((numbero v))
+      ((fresh (d) (== `(,closure-tag . ,d) v)))
+      ((fresh (d) (== `(,prim-tag . ,d) v)))
+      ((fresh (a d)
+         (== `(,a . ,d) v)
+         (=/= closure-tag a)
+         (=/= prim-tag a)
+         (=/= neutral-tag a))))))
+
+(define non-numbero
+  (lambda (v)
+    (conde
+      ((== '() v))
+      ((symbolo v))
+      ((== #f v))
+      ((== #t v))
+      ((fresh (d) (== `(,closure-tag . ,d) v)))
+      ((fresh (d) (== `(,prim-tag . ,d) v)))
+      ((fresh (a d)
+         (== `(,a . ,d) v)
+         (=/= closure-tag a)
+         (=/= prim-tag a)
+         (=/= neutral-tag a))))))
+
+(define non-procedureo
+  (lambda (v)
+    (conde
+      ((== '() v))
+      ((symbolo v))
+      ((== #f v))
+      ((== #t v))
+      ((numbero v))
+      ((fresh (a d)
+         (== `(,a . ,d) v)
+         (=/= closure-tag a)
+         (=/= prim-tag a)
+         (=/= neutral-tag a))))))
+
+(define neutral-termo
+  (lambda (v)
+    (fresh (n)
+      (== `(,neutral-tag ,n) v))))
+
 (define (eval-primo prim-id a* val)
-  ;; TODO really need some abstractions to make
-  ;; the case analyses shorter, more readable,
-  ;; and less error-prone.
   (conde
     ;; TODO finish implementing the commented clauses
-    ;;
-    [(== prim-id 'cons)     
+    [(== prim-id 'cons)
      (fresh (a d)
        (== `(,a ,d) a*)
        (== `(,a . ,d) val)
@@ -290,35 +420,35 @@
      (fresh (v)
        (== `(,v) a*)
        (conde
+         ((fresh (n)
+            (== `(,neutral-tag ,n) v)
+            (== `(,neutral-tag (NCar ,n)) val)))
          ((fresh (d)
             (== `(,val . ,d) v)
             (=/= closure-tag val)
             (=/= prim-tag val)
-            (=/= neutral-tag val)))
-         ((fresh (n)
-            (== `(,neutral-tag ,n) v)
-            (== `(,neutral-tag (NCar ,n)) val)))))]
+            (=/= neutral-tag val)))))]
     [(== prim-id 'cdr)
      (fresh (v)
        (== `(,v) a*)
        (conde
+         ((fresh (n)
+            (== `(,neutral-tag ,n) v)
+            (== `(,neutral-tag (NCdr ,n)) val)))
          ((fresh (a)
             (== `(,a . ,val) v)
             (=/= closure-tag a)
             (=/= prim-tag a)
-            (=/= neutral-tag a)))
-         ((fresh (n)
-            (== `(,neutral-tag ,n) v)
-            (== `(,neutral-tag (NCdr ,n)) val)))))]
+            (=/= neutral-tag a)))))]
     [(== prim-id 'not)
      (fresh (b)
        (== `(,b) a*)
        (conde
-         ((=/= #f b) (== #f val))
-         ((== #f b) (== #t val))
          ((fresh (n)
             (== `(,neutral-tag ,n) b)
-            (== `(,neutral-tag (NNot ,n)) val)))))]
+            (== `(,neutral-tag (NNot ,n)) val)))
+         ((== #f b) (== #t val))
+         ((== #f val) (non-falseo b))))]
     #;[(== prim-id 'equal?)
      (fresh (v1 v2)
        (== `(,v1 ,v2) a*)
@@ -329,112 +459,50 @@
      (fresh (v)
        (== `(,v) a*)
        (conde
-         ((fresh (a d)
-            (== `(,a . ,d) v)
-            (== #f val)
-            (=/= closure-tag a)
-            (=/= prim-tag a)
-            (=/= neutral-tag a)))
-         ((== '() v) (== #f val))
-         ((symbolo v) (== #t val))
-         ((== #f v) (== #f val))
-         ((== #t v) (== #f val))
-         ((numbero v) (== #f val))
-         ((fresh (d) (== `(,closure-tag . ,d) v))
-          (== #f val))
-         ((fresh (d) (== `(,prim-tag . ,d) v))
-          (== #f val))
          ((fresh (n)
             (== `(,neutral-tag ,n) v)
-            (== `(,neutral-tag (NSymbol? ,n)) val)))))]
+            (== `(,neutral-tag (NSymbol? ,n)) val)))
+         ((symbolo v) (== #t val))
+         ((== #f val) (non-symbolo v))))]
     [(== prim-id 'number?)
      (fresh (v)
        (== `(,v) a*)
        (conde
-         ((fresh (a d)
-            (== `(,a . ,d) v)
-            (== #f val)
-            (=/= closure-tag a)
-            (=/= prim-tag a)
-            (=/= neutral-tag a)))
-         ((== '() v) (== #f val))
-         ((symbolo v) (== #f val))
-         ((== #f v) (== #f val))
-         ((== #t v) (== #f val))
-         ((numbero v) (== #t val))
-         ((fresh (d) (== `(,closure-tag . ,d) v))
-          (== #f val))
-         ((fresh (d) (== `(,prim-tag . ,d) v))
-          (== #f val))
          ((fresh (n)
             (== `(,neutral-tag ,n) v)
-            (== `(,neutral-tag (NNumber? ,n)) val)))))]
+            (== `(,neutral-tag (NNumber? ,n)) val)))
+         ((numbero v) (== #t val))
+         ((== #f val) (non-numbero v))))]
     [(== prim-id 'null?)
      (fresh (v)
        (== `(,v) a*)
        (conde
-         ((fresh (a d)
-            (== `(,a . ,d) v)
-            (== #f val)
-            (=/= closure-tag a)
-            (=/= prim-tag a)
-            (=/= neutral-tag a)))
+         ((pair-valueo v) (== #f val))
          ((== '() v) (== #t val))
-         ((symbolo v) (== #f val))
-         ((== #f v) (== #f val))
-         ((== #t v) (== #f val))
-         ((numbero v) (== #f val))
-         ((fresh (d) (== `(,closure-tag . ,d) v))
-          (== #f val))
-         ((fresh (d) (== `(,prim-tag . ,d) v))
-          (== #f val))
-         ((fresh (n)
-            (== `(,neutral-tag ,n) v)
-            (== `(,neutral-tag (NNull? ,n)) val)))))]
+         ((== #f val) (non-nullo v))))]
     [(== prim-id 'pair?)
      (fresh (v)
        (== `(,v) a*)
        (conde
+         ((fresh (n)
+            (== `(,neutral-tag ,n) v)
+            (== `(,neutral-tag (NPair? ,n)) val)))         
          ((fresh (a d)
             (== `(,a . ,d) v)
             (== #t val)
             (=/= closure-tag a)
             (=/= prim-tag a)
             (=/= neutral-tag a)))
-         ((== '() v) (== #f val))
-         ((symbolo v) (== #f val))
-         ((== #f v) (== #f val))
-         ((== #t v) (== #f val))
-         ((numbero v) (== #f val))
-         ((fresh (d) (== `(,closure-tag . ,d) v))
-          (== #f val))
-         ((fresh (d) (== `(,prim-tag . ,d) v))
-          (== #f val))
-         ((fresh (n)
-            (== `(,neutral-tag ,n) v)
-            (== `(,neutral-tag (NPair? ,n)) val)))))]
+         ((== #f val) (atomic-valueo v))))]
     [(== prim-id 'procedure?)
      (fresh (v)
        (== `(,v) a*)
        (conde
-         ((fresh (a d)
-            (== `(,a . ,d) v)
-            (== #f val)
-            (=/= closure-tag a)
-            (=/= prim-tag a)
-            (=/= neutral-tag a)))
-         ((== '() v) (== #f val))
-         ((symbolo v) (== #f val))
-         ((== #f v) (== #f val))
-         ((== #t v) (== #f val))
-         ((numbero v) (== #f val))
-         ((fresh (d) (== `(,closure-tag . ,d) v))
-          (== #t val))
-         ((fresh (d) (== `(,prim-tag . ,d) v))
-          (== #t val))
          ((fresh (n)
             (== `(,neutral-tag ,n) v)
-            (== `(,neutral-tag (NProcedure? ,n)) val)))))]))
+            (== `(,neutral-tag (NProcedure? ,n)) val)))
+         ((== #t val) (procedureo v))
+         ((== #f val) (non-procedureo v))))]))
 
 (define (prim-expo expr env val)
   (conde
