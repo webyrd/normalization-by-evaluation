@@ -916,6 +916,99 @@
               (primitive _.0) (primitive _.1) (primitive _.2)
               (primitive _.3)))))
 
+(test "evalo-11"
+  (run* (q)
+    (evalo
+     `(letrec ((list? (lambda (l)
+                        (if (null? l)
+                            #t
+                            (if (pair? l)
+                                (list? (cdr l))
+                                #f)))))
+        list?)
+     q))
+  '((closure
+     (lambda (l)
+       (if (null? l)
+           #t
+           (if (pair? l)
+               (list? (cdr l)) #f)))
+     ((rec (list? lambda (l)
+                  (if (null? l) #t (if (pair? l) (list? (cdr l)) #f))))
+      (val list closure (lambda x x) ())
+      (val not primitive . not)
+      (val equal? primitive . equal?)
+      (val symbol? primitive . symbol?)
+      (val number? primitive . number?)
+      (val cons primitive . cons)
+      (val null? primitive . null?)
+      (val pair? primitive . pair?)
+      (val car primitive . car)
+      (val cdr primitive . cdr)
+      (val procedure? primitive . procedure?)))))
+
+
+(test "nfo-list?-1"
+  (run* (q)
+    (nfo
+     `(letrec ((list? (lambda (l)
+                        (if (null? l)
+                            #t
+                            (if (pair? l)
+                                (list? (cdr l))
+                                #f)))))
+        (list? '(a b c d e)))
+     q))
+  '(#t))
+
+(test "nfo-list?-2"
+  (run* (q)
+    (nfo
+     `(letrec ((list? (lambda (l)
+                        (if (null? l)
+                            #t
+                            (if (pair? l)
+                                (list? (cdr l))
+                                #f)))))
+        (list? '(a b c d . e)))
+     q))
+  '(#f))
+
+;; TODO FIXME
+;;
+;; This test seems to diverge
+#;(test "nfo-list?-3"
+  (run 1 (q)
+    (nfo
+     `(letrec ((list? (lambda (l)
+                        (if (null? l)
+                            #t
+                            (if (pair? l)
+                                (list? (cdr l))
+                                #f)))))
+        list?)
+     q))
+  '?)
+
+
+
+
+;; TODO FIXME
+;;
+;; why does this run* return ()?
+#;(test "nfo-letrec-1"
+  (run* (q)
+    (nfo
+     `(letrec ((foo (lambda (l)
+                      (if (null? l)
+                          (cons 1 (cons 'cat '()))
+                          (if (pair? l)
+                              (list? (cdr l))
+                              #f)))))
+        foo)
+     q))
+  '??)
+
 
 
 
