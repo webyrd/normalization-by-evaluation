@@ -108,6 +108,9 @@
 ;; This error message comes from (type-index v)
 ;; in
 ;; miniKanren-version/faster-miniKanren/mk.scm
+;;
+;; Is this an error in 'absento'?  An error in reification?
+;; Or am I doing something illegal with miniKanren?
 (test "uneval-too-many"
   (length (run 1000 (val expr) (unevalo val expr)))
   1000)
