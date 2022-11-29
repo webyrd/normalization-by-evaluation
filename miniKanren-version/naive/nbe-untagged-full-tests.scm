@@ -1050,10 +1050,12 @@
   '(((lambda (_.0) 5) (sym _.0))))
 
 
-;; TODO FIXME
+;; Interesting test!
 ;;
-;; why does this run* return ()?
-#;(test "nfo-letrec-1"
+;; There is no normal form, since I wrote this test by changing
+;; 'list?' to 'foo', but missed the recursive call to 'list?'  in the
+;; function body.
+(test "nfo-mistaken-letrec-1"
   (run* (q)
     (nfo
      `(letrec ((foo (lambda (l)
@@ -1064,7 +1066,7 @@
                               #f)))))
         foo)
      q))
-  '??)
+  '())
 
 
 
