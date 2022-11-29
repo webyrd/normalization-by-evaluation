@@ -990,6 +990,32 @@
      q))
   '?)
 
+(test "nfo-simple-letrec-return-function-1"
+  (run* (q)
+    (nfo
+     `(letrec ((f (lambda () 5)))
+        f)
+     q))
+  '((lambda () 5)))
+
+(test "nfo-simple-letrec-return-function-2"
+  (run* (q)
+    (nfo
+     `(letrec ((f (lambda () (cons 5 (cons 'cat '())))))
+        f)
+     q))
+  '((lambda () '(5 cat))))
+
+(test "nfo-simple-letrec-return-function-3"
+  (run* (q)
+    (nfo
+     `(letrec ((f (lambda (x) (cons x (cons 'cat '())))))
+        f)
+     q))
+  '(((lambda (_.0) (cons _.0 '(cat)))
+     (=/= ((_.0 closure)) ((_.0 neutral)) ((_.0 primitive)))
+     (sym _.0))))
+
 
 
 
