@@ -863,6 +863,58 @@
               (primitive _.0) (primitive _.1) (primitive _.2)
               (primitive _.3)))))
 
+(test "evalo-8"
+  (run* (q)
+    (evalo
+     `(letrec ((list? (lambda (l)
+                        (if (null? l)
+                            #t
+                            (if (pair? l)
+                                (list? (cdr l))
+                                #f)))))
+        (list? '(a b c d e)))
+     q))
+  '(#t))
+
+(test "evalo-9"
+  (run* (q)
+    (evalo
+     `(letrec ((list? (lambda (l)
+                        (if (null? l)
+                            #t
+                            (if (pair? l)
+                                (list? (cdr l))
+                                #f)))))
+        (list? '(a b c d . e)))
+     q))
+  '(#f))
+
+(test "evalo-10"
+  (run 5 (l)
+    (evalo
+     `(letrec ((list? (lambda (l)
+                        (if (null? l)
+                            #t
+                            (if (pair? l)
+                                (list? (cdr l))
+                                #f)))))
+        (list? ,l))
+     #t))
+  '('()
+    ('(_.0)
+     (absento (closure _.0) (neutral _.0) (primitive _.0)))
+    ('(_.0 _.1)
+     (absento (closure _.0) (closure _.1) (neutral _.0)
+              (neutral _.1) (primitive _.0) (primitive _.1)))
+    ('(_.0 _.1 _.2)
+     (absento (closure _.0) (closure _.1) (closure _.2) (neutral _.0)
+              (neutral _.1) (neutral _.2) (primitive _.0) (primitive _.1)
+              (primitive _.2)))
+    ('(_.0 _.1 _.2 _.3)
+     (absento (closure _.0) (closure _.1) (closure _.2) (closure _.3)
+              (neutral _.0) (neutral _.1) (neutral _.2) (neutral _.3)
+              (primitive _.0) (primitive _.1) (primitive _.2)
+              (primitive _.3)))))
 
 
 
