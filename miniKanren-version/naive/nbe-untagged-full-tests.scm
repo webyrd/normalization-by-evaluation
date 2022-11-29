@@ -974,9 +974,10 @@
      q))
   '(#f))
 
-;; TODO FIXME
+;; TODO
 ;;
-;; This test seems to diverge
+;; This test appears to diverge, presumably because of the recursion.
+;; Verify that this is the correct behavior.
 #;(test "nfo-list?-3"
   (run 1 (q)
     (nfo
@@ -1016,7 +1017,37 @@
      (=/= ((_.0 closure)) ((_.0 neutral)) ((_.0 primitive)))
      (sym _.0))))
 
+;; TODO
+;;
+;; This test appears to diverge, presumably because of the recursion.
+;; Verify that this is the correct behavior.
+#;(test "nfo-simple-letrec-return-function-4"
+  (run 1 (q)
+    (nfo
+     `(letrec ((f (lambda (x) (f x))))
+        f)
+     q))
+  '???)
 
+(test "nfo-simple-letrec-return-function-5"
+  (run* (q)
+    (nfo
+     `(letrec ((f (lambda (x) (if #f (f x) 5))))
+        f)
+     q))
+  '(((lambda (_.0) 5) (sym _.0))))
+
+;; TODO
+;;
+;; This test appears to diverge, presumably because of the recursion.
+;; Verify that this is the correct behavior.
+#;(test "nfo-simple-letrec-return-function-6"
+  (run 1 (q)
+    (nfo
+     `(letrec ((f (lambda (x) (if x (f x) 5))))
+        f)
+     q))
+  '(((lambda (_.0) 5) (sym _.0))))
 
 
 ;; TODO FIXME
