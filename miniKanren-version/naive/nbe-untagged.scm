@@ -58,7 +58,9 @@
          (symbolo x)
          (symbolo x^)
          (fresho xs x^)
-         (eval-expro body `((,x . (N (NVar ,x^))) . ,env) bv)
+         (eval-expro body
+                     `((,x . (N (NVar ,x^))) . ,env)
+                     bv)
          (uneval-valueo `(,x^ . ,xs) bv body^))))))
 
 (define uneval-neutralo

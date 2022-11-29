@@ -1156,6 +1156,32 @@
      val))
   '(#t))
 
+;; TODO FIXME
+(test "nfo-list?-template-1"
+  (run* (expr)
+    (nfo
+     `(lambda (list?)
+        (lambda (l)
+          (if (null? l)
+              #t
+              (if (pair? l)
+                  (list? (cdr l))
+                  #f))))
+     expr))
+  '(((lambda (_.0)
+       (lambda (_.1)
+         (if (null? _.1)
+             #t
+             (if (pair? _.1)
+                 (_.0 (cdr _.1))
+                 #f))))
+     (=/= ((_.0 _.1))
+          ((_.1 closure))
+          ((_.1 neutral))
+          ((_.1 primitive)))
+     (sym _.0 _.1))))
+
+
 (test "evalo-4"
   (run* (val)
     (evalo
@@ -1354,7 +1380,7 @@
      q))
   '((a b c d e)))
 
-(test "nfo-append-1"
+(test "nfo-append-2"
   (run* (q)
     (nfo
      `(letrec ((append (lambda (l s)
@@ -1364,7 +1390,28 @@
                                    (append (cdr l) s))))))
         (append '(a b c) '(d e)))
      q))
-  '('(a b c d e)))
+  '((quote (a b c d e))))
+
+(test "nfo-free-var-1"
+  (run* (expr)
+    (nfo 'x expr))
+  '())
+
+(test "evalo-free-var-1"
+  (run* (val)
+    (evalo 'x val))
+  '())
+
+(test "evalo-free-var-2"
+  (run* (val)
+    (eval-expro 'x val))
+  '())
+
+(test "unevalo-free-var-1"
+  (run* (expr)
+    (fresh (x^)
+      (unevalo `(,neutral-tag (NVar ,x^)) expr)))
+  '((_.0 (sym _.0))))
 
 
 (test "nfo-list?-1"
