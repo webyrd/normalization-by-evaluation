@@ -947,6 +947,30 @@
       (val cdr primitive . cdr)
       (val procedure? primitive . procedure?)))))
 
+(test "evalo-append-1"
+  (run* (q)
+    (evalo
+     `(letrec ((append (lambda (l s)
+                         (if (null? l)
+                             s
+                             (cons (car l)
+                                   (append (cdr l) s))))))
+        (append '(a b c) '(d e)))
+     q))
+  '((a b c d e)))
+
+(test "nfo-append-1"
+  (run* (q)
+    (nfo
+     `(letrec ((append (lambda (l s)
+                         (if (null? l)
+                             s
+                             (cons (car l)
+                                   (append (cdr l) s))))))
+        (append '(a b c) '(d e)))
+     q))
+  '('(a b c d e)))
+
 
 (test "nfo-list?-1"
   (run* (q)
