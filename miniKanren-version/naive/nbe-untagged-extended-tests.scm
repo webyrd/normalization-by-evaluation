@@ -36,22 +36,24 @@
                 val))
   '((((x . _.0) . _.1) (_.0 . 5))))
 
-;; cons doesn't show this behavior, since it is a constructor not a destructor
-(run 2 (env val)
+(test "foo-6"
+  ;; cons doesn't show this behavior, since it is a constructor not a destructor
+  (run 2 (env val)
     (eval-expro '(car x)
                 env
                 val))
-'(((((x _.0 . _.1) . _.2) _.0)
-   (=/= ((_.0 N)) ((_.0 closure))))
-  (((x N _.0) . _.1) (N (NCar _.0))))
+  '(((((x _.0 . _.1) . _.2) _.0)
+     (=/= ((_.0 N)) ((_.0 closure))))
+    (((x N _.0) . _.1) (N (NCar _.0)))))
 
-(run 2 (env val)
+(test "foo-7"
+  (run 2 (env val)
     (eval-expro '(x 1)
                 env
                 val))
-'((((x N _.0) . _.1) (N (NApp _.0 1)))
-  ((((x closure (_.0) #f _.1) . _.2) #f) (sym _.0)))
-> 
+  '((((x N _.0) . _.1) (N (NApp _.0 1)))
+    ((((x closure (_.0) #f _.1) . _.2) #f) (sym _.0))))
+
 
 
 
