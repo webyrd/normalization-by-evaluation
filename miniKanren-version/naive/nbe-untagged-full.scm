@@ -837,12 +837,12 @@
          (=/= 'quote a))))))
 
 (define (unevalo val expr)
-  (uneval-valueo xs val expr))
+  (uneval-valueo '() val expr))
 
 (define (uneval-valueo xs val expr)
   (conde
     
-    ((numbero val) (== v expr))
+    ((numbero val) (== val expr))
     
     ((== #f val) (== #f expr))
     ((== #t val) (== #t expr))
