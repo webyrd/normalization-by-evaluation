@@ -457,7 +457,7 @@
             (== `(,neutral-tag ,n1) v1)
             (== `(,neutral-tag (NEqual?n/v ,n1 ,v2)) val)
             (valueo v2)))
-         ((fresh (n1)
+         ((fresh (n2)
             (== `(,neutral-tag ,n2) v2)
             (== `(,neutral-tag (NEqual?v/n ,v1 ,n2)) val)
             (valueo v1)))
