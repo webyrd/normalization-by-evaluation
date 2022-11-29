@@ -97,3 +97,17 @@
     ((((val x closure (lambda _.0 _.1) _.2) . _.3) _.1)
      (num _.1)
      (sym _.0))))
+
+(test "uneval-many"
+  (length (run 350 (val expr) (unevalo val expr)))
+  350)
+
+;; Strange error on the 351st result:
+;; Exception in type-index: no matching type constraint with irritant ()
+;;
+;; This error message comes from (type-index v)
+;; in
+;; miniKanren-version/faster-miniKanren/mk.scm
+(test "uneval-too-many"
+  (length (run 1000 (val expr) (unevalo val expr)))
+  1000)
