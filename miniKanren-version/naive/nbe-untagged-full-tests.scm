@@ -603,6 +603,265 @@
 
 
 
+(test "evalo-quote-1"
+  (run* (val)
+    (evalo `(quote ()) val))
+  '(()))
+
+(test "evalo-quote-2"
+  (run* (val)
+    (evalo `(quote cat) val))
+  '(cat))
+
+(test "evalo-quote-3"
+  (run* (val)
+    (evalo `(quote (foo bar baz)) val))
+  '((foo bar baz)))
+
+(test "evalo-quote-4"
+  (run* (val)
+    (evalo `(quote (quote () quote foo ((cat dog)))) val))
+  '((quote () quote foo ((cat dog)))))
+
+(test "evalo-quote-5"
+  (run* (val)
+    (evalo `(quote (foo bar . baz)) val))
+  '((foo bar . baz)))
+
+
+(test "evalo-cons-1"
+  (run* (val)
+    (evalo `(cons (quote cat) (quote dog)) val))
+  '((cat . dog)))
+
+(test "evalo-cons-2"
+  (run* (val)
+    (evalo `(cons (quote cat) (quote ())) val))
+  '((cat)))
+
+(test "evalo-cons-3"
+  (run* (val)
+    (evalo `(cons (quote cat) (cons (quote fox) (quote ()))) val))
+  '((cat fox)))
+
+
+(test "nfo-cons-1"
+  (run* (expr)
+    (nfo `(cons (quote cat) (cons (quote fox) (quote ()))) expr))
+  '((quote (cat fox))))
+
+(test "nfo-cons-2"
+  (run* (expr)
+    (nfo `(cons (quote cat) (quote fox)) expr))
+  '((quote (cat . fox))))
+
+(test "nfo-cons-3"
+  (run* (expr)
+    (nfo `(cons (cons (quote a) (quote b)) (cons (quote c) (quote d)))
+         expr))
+  '((quote ((a . b) . (c . d)))))
+
+
+(test "nfo-quoted-pair-backwards-1"
+  (run 13 (expr)
+    (nfo expr
+         '(quote ((a . b) . (c . d)))))
+  '('((a . b) c . d)
+    (letrec ()
+      '((a . b) c . d))
+    (let ()
+      '((a . b) c . d))
+    (let* ()
+      '((a . b) c . d))
+    ((letrec ([_.0 (lambda _.1 _.2)])
+       '((a . b) c . d))
+     (=/= ((_.0 quote)))
+     (sym _.0 _.1))
+    ((letrec ([_.0 (lambda () _.1)])
+       '((a . b) c . d))
+     (=/= ((_.0 quote)))
+     (sym _.0))
+    ((let ([_.0 _.1])
+       '((a . b) c . d))
+     (=/= ((_.0 quote)))
+     (num _.1)
+     (sym _.0))
+    (and '((a . b) c . d))
+    ((letrec ([_.0 (lambda (_.1) _.2)])
+       '((a . b) c . d))
+     (=/= ((_.0 quote)))
+     (sym _.0 _.1))
+    ((letrec ([_.0 (lambda _.1 _.2)] [_.3 (lambda _.4 _.5)])
+       '((a . b) c . d))
+     (=/= ((_.0 quote)) ((_.3 quote)))
+     (sym _.0 _.1 _.3 _.4))
+    (or '((a . b) c . d))
+    ((let ([_.0 list]) '((a . b) c . d))
+     (=/= ((_.0 quote)))
+     (sym _.0))
+    ((if _.0 '((a . b) c . d) _.1)
+     (num _.0))))
+
+
+(test "evalo-1"
+  (run* (val)
+    (evalo `(lambda (z) z) val))
+  '((closure
+     (lambda (z) z)
+     ((val list closure (lambda x x) ())
+      (val not primitive . not)
+      (val equal? primitive . equal?)
+      (val symbol? primitive . symbol?)
+      (val number? primitive . number?)
+      (val cons primitive . cons) (val null? primitive . null?)
+      (val pair? primitive . pair?) (val car primitive . car)
+      (val cdr primitive . cdr)
+      (val procedure? primitive . procedure?)))))
+
+(test "evalo-2"
+  (run* (val)
+    (evalo
+     `((lambda (x) (lambda (y) x))
+       (lambda (z) z))
+     val))
+  '((closure
+     (lambda (y) x)
+     ((val x
+           closure
+           (lambda (z) z)
+           ((val list closure (lambda x x) ()) (val not primitive . not) (val equal? primitive . equal?)
+            (val symbol? primitive . symbol?)
+            (val number? primitive . number?)
+            (val cons primitive . cons) (val null? primitive . null?)
+            (val pair? primitive . pair?) (val car primitive . car)
+            (val cdr primitive . cdr)
+            (val procedure? primitive . procedure?))) (val list closure (lambda x x) ())
+            (val not primitive . not) (val equal? primitive . equal?)
+            (val symbol? primitive . symbol?)
+            (val number? primitive . number?)
+            (val cons primitive . cons) (val null? primitive . null?)
+            (val pair? primitive . pair?) (val car primitive . car)
+            (val cdr primitive . cdr)
+            (val procedure? primitive . procedure?)))))
+
+(test "evalo-3"
+  (run* (val)
+    (evalo
+     `(((lambda (f)
+          ((lambda (x) (f (lambda (v) ((x x) v))))
+           (lambda (x) (f (lambda (v) ((x x) v))))))
+        (lambda (list?)
+          (lambda (l)
+            (if (null? l)
+                #t
+                (if (pair? l)
+                    (list? (cdr l))
+                    #f)))))
+       '(1 2 3))
+     val))
+  '(#t))
+
+(test "evalo-4"
+  (run* (val)
+    (evalo
+     `(((lambda (f)
+          ((lambda (x) (f (lambda (v) ((x x) v))))
+           (lambda (x) (f (lambda (v) ((x x) v))))))
+        (lambda (list?)
+          (lambda (l)
+            (if (null? l)
+                #t
+                (if (pair? l)
+                    (list? (cdr l))
+                    #f)))))
+       '(1 2 . 3))
+     val))
+  '(#f))
+
+(test "evalo-5"
+  (run* (val)
+    (evalo
+     `((lambda (Z)
+         ((lambda (F)
+            ((Z F) '(1 2 . 3)))
+          (lambda (list?)
+            (lambda (l)
+              (if (null? l)
+                  #t
+                  (if (pair? l)
+                      (list? (cdr l))
+                      #f))))))
+       (lambda (f)
+         ((lambda (x) (f (lambda (v) ((x x) v))))
+          (lambda (x) (f (lambda (v) ((x x) v)))))))
+     val))
+  '(#f))
+
+(test "evalo-6"
+  (run 5 (l)
+    (evalo
+     `((lambda (Z)
+         ((lambda (F)
+            ((Z F) ',l))
+          (lambda (list?)
+            (lambda (l)
+              (if (null? l)
+                  #t
+                  (if (pair? l)
+                      (list? (cdr l))
+                      #f))))))
+       (lambda (f)
+         ((lambda (x) (f (lambda (v) ((x x) v))))
+          (lambda (x) (f (lambda (v) ((x x) v)))))))
+     #t))
+  '(()
+    ((_.0)
+     (absento (closure _.0) (neutral _.0) (primitive _.0)))
+    ((_.0 _.1)
+     (absento (closure _.0) (closure _.1) (neutral _.0)
+              (neutral _.1) (primitive _.0) (primitive _.1)))
+    ((_.0 _.1 _.2)
+     (absento (closure _.0) (closure _.1) (closure _.2) (neutral _.0)
+              (neutral _.1) (neutral _.2) (primitive _.0) (primitive _.1)
+              (primitive _.2)))
+    ((_.0 _.1 _.2 _.3)
+     (absento (closure _.0) (closure _.1) (closure _.2) (closure _.3)
+              (neutral _.0) (neutral _.1) (neutral _.2) (neutral _.3)
+              (primitive _.0) (primitive _.1) (primitive _.2)
+              (primitive _.3)))))
+
+(test "evalo-7"
+  (run 5 (l)
+    (evalo
+     `((lambda (Z)
+         ((lambda (F)
+            ((Z F) ,l))
+          (lambda (list?)
+            (lambda (l)
+              (if (null? l)
+                  #t
+                  (if (pair? l)
+                      (list? (cdr l))
+                      #f))))))
+       (lambda (f)
+         ((lambda (x) (f (lambda (v) ((x x) v))))
+          (lambda (x) (f (lambda (v) ((x x) v)))))))
+     #t))
+  '('()
+    ('(_.0)
+     (absento (closure _.0) (neutral _.0) (primitive _.0)))
+    ('(_.0 _.1)
+     (absento (closure _.0) (closure _.1) (neutral _.0)
+              (neutral _.1) (primitive _.0) (primitive _.1)))
+    ('(_.0 _.1 _.2)
+     (absento (closure _.0) (closure _.1) (closure _.2) (neutral _.0)
+              (neutral _.1) (neutral _.2) (primitive _.0) (primitive _.1)
+              (primitive _.2)))
+    ('(_.0 _.1 _.2 _.3)
+     (absento (closure _.0) (closure _.1) (closure _.2) (closure _.3)
+              (neutral _.0) (neutral _.1) (neutral _.2) (neutral _.3)
+              (primitive _.0) (primitive _.1) (primitive _.2)
+              (primitive _.3)))))
 
 
 
