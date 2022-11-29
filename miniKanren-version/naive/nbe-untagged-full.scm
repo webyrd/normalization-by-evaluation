@@ -490,8 +490,7 @@
        (conde
          ((fresh (n)
             (== `(,neutral-tag ,n) v)
-            (== `(,neutral-tag (NNull? ,n)) val)))         
-         ((pair-valueo v) (== #f val))
+            (== `(,neutral-tag (NNull? ,n)) val)))
          ((== '() v) (== #t val))
          ((== #f val) (non-nullo v))))]
     [(== prim-id 'pair?)
