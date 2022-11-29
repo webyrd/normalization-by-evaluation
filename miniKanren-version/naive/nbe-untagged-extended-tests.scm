@@ -1081,3 +1081,7 @@
      '()
      `(lambda (y) (lambda (z) y))))
   '(_.0))
+
+(test "uneval-valueo-many"
+  (length (run 10000 (val expr) (uneval-valueo '() val expr)))
+  10000)
