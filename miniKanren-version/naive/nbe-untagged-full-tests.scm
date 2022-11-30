@@ -1404,7 +1404,7 @@
 
 (test "evalo-free-var-2"
   (run* (val)
-    (eval-expro 'x val))
+    (evalo 'x val))
   '())
 
 (test "unevalo-free-var-1"
