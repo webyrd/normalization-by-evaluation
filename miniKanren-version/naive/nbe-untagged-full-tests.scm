@@ -1224,6 +1224,16 @@
           ((_.1 primitive)))
      (sym _.0 _.1))))
 
+(test "nfo-template-5"
+  (run* (expr)
+    (nfo
+     `(lambda (l)
+        (null? (car l)))
+     expr))
+  '(((lambda (_.0)
+       (null? (car _.0)))
+     (sym _.0))))
+
 
 (test "evalo-4"
   (run* (val)
