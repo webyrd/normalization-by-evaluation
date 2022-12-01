@@ -1174,10 +1174,7 @@
              (if (pair? _.1)
                  (_.0 (cdr _.1))
                  #f))))
-     (=/= ((_.0 _.1))
-          ((_.1 closure))
-          ((_.1 neutral))
-          ((_.1 primitive)))
+     (=/= ((_.0 _.1)))
      (sym _.0 _.1))))
 
 (test "nfo-list?-template-2"
@@ -1190,10 +1187,7 @@
   '(((lambda (_.0)
        (lambda (_.1)
          (_.0 (cdr _.1))))
-     (=/= ((_.0 _.1))
-          ((_.1 closure))
-          ((_.1 neutral))
-          ((_.1 primitive)))
+     (=/= ((_.0 _.1)))
      (sym _.0 _.1))))
 
 (test "nfo-list?-template-3"
@@ -1204,10 +1198,7 @@
      expr))
   '(((lambda (_.0 _.1)
        (_.0 (cdr _.1)))
-     (=/= ((_.0 _.1))
-          ((_.1 closure))
-          ((_.1 neutral))
-          ((_.1 primitive)))
+     (=/= ((_.0 _.1)))
      (sym _.0 _.1))))
 
 (test "nfo-template-4"
@@ -1218,10 +1209,7 @@
      expr))
   '(((lambda (_.0 _.1)
        (_.0 (car _.1) (cdr _.1)))
-     (=/= ((_.0 _.1))
-          ((_.1 closure))
-          ((_.1 neutral))
-          ((_.1 primitive)))
+     (=/= ((_.0 _.1)))
      (sym _.0 _.1))))
 
 (test "nfo-template-5"

@@ -962,15 +962,25 @@
          (uneval-valueo xs v1 e1)))
       ((fresh (n^ a* e e*)
          (== `(NApp ,n^ ,a*) n)
-         (== `(,e ,e*) expr)
+         (== `(,e . ,e*) expr)
          (uneval-neutralo xs n^ e)
-         (uneval-valueo xs a* e*)))
+         (uneval-listo xs a* e*)))
       ((fresh (n1 v2 v3 e1 e2 e3)
          (== `(NIf ,n1 ,v2 ,v3) n)
          (== `(if ,e1 ,e2 ,e3) expr)
          (uneval-neutralo xs n1 e1)
          (uneval-valueo xs v2 e2)
          (uneval-valueo xs v3 e3))))))
+
+(define uneval-listo
+  (lambda (xs a* e*)
+    (conde
+      ((== '() a*) (== '() e*))
+      ((fresh (a a-rest e e-rest)
+         (== `(,a . ,a-rest) a*)
+         (== `(,e . ,e-rest) e*)
+         (uneval-valueo xs a e)
+         (uneval-listo xs a-rest e-rest))))))
 
 (define ext-env-neutral*o
   (lambda (x* x*^ env env^ xs xs^)
