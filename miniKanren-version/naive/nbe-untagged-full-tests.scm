@@ -1156,7 +1156,6 @@
      val))
   '(#t))
 
-;; TODO FIXME
 (test "nfo-list?-template-1"
   (run* (expr)
     (nfo
@@ -1175,6 +1174,50 @@
              (if (pair? _.1)
                  (_.0 (cdr _.1))
                  #f))))
+     (=/= ((_.0 _.1))
+          ((_.1 closure))
+          ((_.1 neutral))
+          ((_.1 primitive)))
+     (sym _.0 _.1))))
+
+(test "nfo-list?-template-2"
+  (run* (expr)
+    (nfo
+     `(lambda (list?)
+        (lambda (l)
+          (list? (cdr l))))
+     expr))
+  '(((lambda (_.0)
+       (lambda (_.1)
+         (_.0 (cdr _.1))))
+     (=/= ((_.0 _.1))
+          ((_.1 closure))
+          ((_.1 neutral))
+          ((_.1 primitive)))
+     (sym _.0 _.1))))
+
+(test "nfo-list?-template-3"
+  (run* (expr)
+    (nfo
+     `(lambda (list? l)
+        (list? (cdr l)))
+     expr))
+  '(((lambda (_.0 _.1)
+       (_.0 (cdr _.1)))
+     (=/= ((_.0 _.1))
+          ((_.1 closure))
+          ((_.1 neutral))
+          ((_.1 primitive)))
+     (sym _.0 _.1))))
+
+(test "nfo-template-4"
+  (run* (expr)
+    (nfo
+     `(lambda (f l)
+        (f (car l) (cdr l)))
+     expr))
+  '(((lambda (_.0 _.1)
+       (_.0 (car _.1) (cdr _.1)))
      (=/= ((_.0 _.1))
           ((_.1 closure))
           ((_.1 neutral))
