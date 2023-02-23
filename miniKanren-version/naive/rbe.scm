@@ -238,3 +238,16 @@
     ((lambda (_.2) _.2) (lambda (_.3) _.3)))
    (=/= ((_.0 _.2) (_.1 _.3)))
    (sym _.0 _.1 _.2 _.3)))
+
+
+;; From Michael:
+;; From wiki: https://en.wikipedia.org/wiki/Fixed-point_combinator
+(run 1 (iota)
+  (== '((lambda (x) (lambda (y) (y ((x x) y))))
+        (lambda (x) (lambda (y) (y ((x x) y)))))
+      iota)
+  (rfo `(lambda (f) (,iota f)) `(lambda (f) (f (,iota f)))))
+;; =>
+'(((lambda (x) (lambda (y) (y ((x x) y))))
+   (lambda (x) (lambda (y) (y ((x x) y))))))
+;; Doesn't seem to help re synthesizing bigger terms as you add holes, though.
