@@ -29,14 +29,6 @@
               (== `(closure (,x) ,body ,env) val)
               (symbolo x)))
       ((symbolo expr) (lookupo expr env val))
-
-      ;; Inlined and distributed apply-expro to better connect to output
-      ((fresh (e1 e2 f v)
-              (== `(,e1 ,e2) expr)
-              (== `(NApp ,f ,v) val)
-              (eval-expro e1 env f)
-              (eval-expro e2 env v)
-              ))
       ((fresh (e1 e2 f v x body env^)
               (== `(,e1 ,e2) expr)
               (== `(closure (,x) ,body ,env^) f)
