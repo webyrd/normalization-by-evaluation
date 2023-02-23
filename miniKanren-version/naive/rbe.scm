@@ -200,8 +200,21 @@
   (rfo `(lambda (f) (f (,Y f))) t))
 |#
 
+;; Omega reduces to itself
+(run 2 (t1 t2)
+  (== '((lambda (x) (x x))
+        (lambda (x) (x x)))
+      t1)
+  (rfo t1 t2))
+;; =>
+'(((((lambda (x) (x x)) (lambda (x) (x x)))
+    ((lambda (_.0) (_.0 _.0)) (lambda (_.1) (_.1 _.1))))
+   (sym _.0 _.1))
+  ((((lambda (x) (x x)) (lambda (x) (x x)))
+    ((lambda (_.0) (_.0 _.0)) (lambda (_.1) (_.1 _.1))))
+   (sym _.0 _.1)))
 
-;; Challenge:  how to generate omega?
+;; Challenge:  how to generate Omega?
 ;; MB suggests that using De Bruijn
 ;; would work.
 (run 1 (t1 t2)
