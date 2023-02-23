@@ -141,3 +141,61 @@
       ((lambda (y) x) (lambda (z) (lambda (_.0) _.0)))))
    (=/= ((_.0 x)) ((_.0 z)))
    (sym _.0)))
+
+#|
+(run 1 (Y t)
+  (rfo `(lambda (f) (,Y f)) t)
+  (rfo `(lambda (f) (f (,Y f))) t))
+|#
+
+#|
+;; Call-by-name Y combinator
+(lambda (f)
+  ((lambda (x) (f (x x)))
+   (lambda (x) (f (x x)))))
+|#
+
+(run 1 (Y t)
+  (== '(lambda (f)
+         ((lambda (x) (f (x x)))
+          (lambda (x) (f (x x)))))
+      Y)
+  (rfo `(lambda (f) (,Y f)) t)
+  (rfo `(lambda (f) (f (,Y f))) t))
+;; =>
+'((((lambda (f)
+      ((lambda (x) (f (x x)))
+       (lambda (x) (f (x x)))))
+    (lambda (_.0)
+      (_.0 ((lambda (_.1) (_.0 (_.1 _.1)))
+            (lambda (_.2) (_.0 (_.2 _.2)))))))
+   (=/= ((_.0 _.1)) ((_.0 _.2)))
+   (sym _.0 _.1 _.2)))
+
+(run 1 (Y t)
+  (fresh (?)
+    (== `(lambda (f)
+           ((lambda (x) (f (x x)))
+            (lambda (x) (f (,? ,?)))))
+        Y))
+  (rfo `(lambda (f) (,Y f)) t)
+  (rfo `(lambda (f) (f (,Y f))) t))
+;; =>
+'((((lambda (f)
+     ((lambda (x) (f (x x))) (lambda (x) (f (x x)))))
+    (lambda (_.0)
+      (_.0 ((lambda (_.1) (_.0 (_.1 _.1)))
+             (lambda (_.2) (_.0 (_.2 _.2)))))))
+   (=/= ((_.0 _.1)) ((_.0 _.2)))
+   (sym _.0 _.1 _.2)))
+
+#|
+(run 1 (Y t)
+  (fresh (?)
+    (== `(lambda (f)
+           ((lambda (x) (f ,?))
+            (lambda (x) (f (x x)))))
+        Y))
+  (rfo `(lambda (f) (,Y f)) t)
+  (rfo `(lambda (f) (f (,Y f))) t))
+|#
