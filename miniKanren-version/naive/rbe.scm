@@ -199,3 +199,29 @@
   (rfo `(lambda (f) (,Y f)) t)
   (rfo `(lambda (f) (f (,Y f))) t))
 |#
+
+
+;; Challenge:  how to generate omega?
+;; MB suggests that using De Bruijn
+;; would work.
+(run 1 (t1 t2)
+  (=/= t1 t2)
+  (rfo t1 t2)
+  (rfo t2 t1))
+;; =>
+((((lambda (_.0) _.0)
+   (lambda (_.1) _.1))
+   (=/= ((_.0 _.1)))
+   (sym _.0 _.1)))
+
+(run 1 (t1 t2)
+  (fresh (e1 e2)
+    (== `(,e1 ,e2) t1))
+  (=/= t1 t2)
+  (rfo t1 t2)
+  (rfo t2 t1))
+;; =>
+'(((((lambda (_.0) _.0) (lambda (_.1) _.1))
+    ((lambda (_.2) _.2) (lambda (_.3) _.3)))
+   (=/= ((_.0 _.2) (_.1 _.3)))
+   (sym _.0 _.1 _.2 _.3)))
