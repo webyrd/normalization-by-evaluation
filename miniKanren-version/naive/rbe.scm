@@ -92,7 +92,7 @@
 (run* (q)
   (rfo '(lambda (x) ((lambda (y) x) (lambda (z) w))) q))
 ;; =>
-(((lambda (_.0) _.0) (sym _.0)))
+'(((lambda (_.0) _.0) (sym _.0)))
 
 (run 1 (q)
   (fresh (t)
@@ -222,8 +222,8 @@
   (rfo t1 t2)
   (rfo t2 t1))
 ;; =>
-((((lambda (_.0) _.0)
-   (lambda (_.1) _.1))
+'((((lambda (_.0) _.0)
+    (lambda (_.1) _.1))
    (=/= ((_.0 _.1)))
    (sym _.0 _.1)))
 
