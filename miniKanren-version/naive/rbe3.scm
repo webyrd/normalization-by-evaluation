@@ -86,6 +86,10 @@
        (reduceo xs e2 env e2^))]
 
     ; app reduces
+
+    ; It makes sense that to reduce an appplication, we have to obtain a value for the rator.
+    ; But, we also force the operand to reduce. I think this means that this version is implementing Beta-value
+    ; reduction, not general beta.
     [(fresh (e1 e2 f v x body env^)
         (== `(,e1 ,e2) expr)
         (== `(closure (,x) ,body ,env^) f)
