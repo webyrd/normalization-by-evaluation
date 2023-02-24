@@ -141,3 +141,31 @@
 ;; * add eta
 ;; * merge conde clauses, reorder, etc., if helpful
 ;; * write a pearl!
+
+(test "synthesize Y from (lambda (F) (,? ,?)), where ? is the U combinator"
+  (time (run 1 (Y t)
+          (fresh (?)
+            (== `(lambda (f) (,? ,?)) Y))
+          (rfo `(lambda (f) (,Y f)) t)
+          (rfo `(lambda (f) (f (,Y f))) t)))
+  '((((lambda (f)
+        ((lambda (_.0) (f (_.0 _.0))) (lambda (_.0) (f (_.0 _.0)))))
+      (lambda (_.1)
+        (_.1 (_.1 ((lambda (_.2) (_.1 (_.2 _.2)))
+                   (lambda (_.3) (_.1 (_.3 _.3))))))))
+     (=/= ((_.0 f)) ((_.1 _.2)) ((_.1 _.3)))
+     (sym _.0 _.1 _.2 _.3))))
+;; (time (run 1 ...))
+;;     1680 collections
+;;     152.811652658s elapsed cpu time, including 12.961612693s collecting
+;;     152.823347000s elapsed real time, including 12.968673000s collecting
+;;     14080950784 bytes allocated, including 13852423440 bytes reclaimed
+
+;; This version seems to take a long time...
+#|
+(time (run 1 (Y t)
+        (fresh (?1 ?2)
+          (== `(lambda (f) (,?1 ,?2)) Y))
+        (rfo `(lambda (f) (,Y f)) t)
+        (rfo `(lambda (f) (f (,Y f))) t)))
+|#
