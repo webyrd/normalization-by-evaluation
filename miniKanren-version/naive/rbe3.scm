@@ -134,14 +134,6 @@
           ((_.3 f)))
      (sym _.0 _.1 _.2 _.3))))
 
-;; TODO
-;; * try synthesizing Z combinator
-;; * try to do general beta reduction instead of just beta value
-;; (MB hypothesizes this will require introducing neutral terms to the evaluator)
-;; * add eta
-;; * merge conde clauses, reorder, etc., if helpful
-;; * write a pearl!
-
 (test "synthesize Y from (lambda (F) (,? ,?)), where ? is the U combinator"
   (time (run 1 (Y t)
           (fresh (?)
@@ -169,3 +161,14 @@
         (rfo `(lambda (f) (,Y f)) t)
         (rfo `(lambda (f) (f (,Y f))) t)))
 |#
+
+;; TODO
+;; * try synthesizing Z combinator
+;; * try to do general beta reduction instead of just beta value
+;; (MB hypothesizes this will require introducing neutral terms to the evaluator)
+;; * add eta
+;; * create De Bruijn version, which should make it easier to represent
+;;   Omega synthesis, for example
+;; * merge conde clauses, reorder, etc., if helpful
+;; * add depth limited search
+;; * write a pearl!
