@@ -103,6 +103,22 @@
   (lambda (e e^)
     (reduceo '() e '() e^)))
 
+(test "check it's Beta-v"
+  (run* (q) (rfo '(lambda (f) ((lambda (x) x) ((lambda (x) (x x)) f))) q))
+  '(
+    ;; reduced in operand; note that (_.0 _.0) cannot be further reduced because the value of the variable is unknown
+    ((lambda (_.0) ((lambda (_.1) _.1) (_.0 _.0)))
+     (=/= ((_.0 _.1)))
+     (sym _.0 _.1))
+
+    ;; not reduced at all
+    ((lambda (_.0)
+       ((lambda (_.1) _.1) ((lambda (_.2) (_.2 _.2)) _.0)))
+     (=/= ((_.0 _.1)) ((_.0 _.2)))
+     (sym _.0 _.1 _.2))
+
+    ;; no additional answer where the top-level application is reduced
+    ))
 
 ;; iota from wiki: https://en.wikipedia.org/wiki/Fixed-point_combinator
 (test "check iota"
