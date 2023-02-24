@@ -133,3 +133,11 @@
      (=/= ((_.0 _.1)) ((_.0 f)) ((_.1 f)) ((_.2 _.3)) ((_.2 f))
           ((_.3 f)))
      (sym _.0 _.1 _.2 _.3))))
+
+;; TODO
+;; * try synthesizing Z combinator
+;; * try to do general beta reduction instead of just beta value
+;; (MB hypothesizes this will require introducing neutral terms to the evaluator)
+;; * add eta
+;; * merge conde clauses, reorder, etc., if helpful
+;; * write a pearl!
