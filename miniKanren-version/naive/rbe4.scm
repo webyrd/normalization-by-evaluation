@@ -49,6 +49,12 @@
 
 (define (reduceo xs expr env expr^)
   (conde
+
+    ;; var stays a var
+    [(symbolo expr)
+     (symbolo expr^)
+     (lookupo expr env `(NVar ,expr^))]
+    
     ;; lambda stays a lambda
     [(fresh (x body x^ body^)
        (== `(lambda (,x) ,body) expr)
@@ -60,11 +66,6 @@
                 body
                 `((,x . (NVar ,x^)) . ,env)
                 body^))]
-
-    ;; var stays a var
-    [(symbolo expr)
-     (symbolo expr^)
-     (lookupo expr env `(NVar ,expr^))]
     
     ;; var looks up to a closure
     [(fresh (x body x^ body^ env^)
@@ -224,6 +225,49 @@
 ;;     7812939584 bytes allocated, including 7615335136 bytes reclaimed
 
 
+(test "Is this equivalent to Y???"
+  (time
+   (run 1 (Y t)
+     (fresh (?1 ?2)
+       (== `(lambda (f)
+              ((lambda (x) ,?1)
+               (lambda (x) (f ,?2)))) Y)
+       (rfo `(lambda (f) (f (,Y f))) t)
+       (rfo `(lambda (f) (,Y f)) t))))
+  '((((lambda (f)
+        ((lambda (x) (x x))
+         (lambda (x) (f ((lambda (_.0) (_.0 _.0)) x)))))
+      (lambda (_.1)
+        (_.1 ((lambda (_.2) (_.2 _.2))
+              (lambda (_.3) (_.1 (_.3 _.3)))))))
+     (=/= ((_.1 _.2)) ((_.1 _.3)))
+     (sym _.0 _.1 _.2 _.3))))
+;; (time (run 1 ...))
+;;     1133 collections
+;;     20.336744548s elapsed cpu time, including 5.535748777s collecting
+;;     20.342381000s elapsed real time, including 5.540460000s collecting
+;;     9503583280 bytes allocated, including 9546430240 bytes reclaimed
+
+(test "Is this equivalent to Y??? 2"
+  (time
+   (run 1 (Y t)
+     (fresh (?)
+       (== `(lambda (f)
+              ((lambda (x) (x x))
+               (lambda (x) (f ,?)))) Y)
+       (rfo `(lambda (f) (f (,Y f))) t)
+       (rfo `(lambda (f) (,Y f)) t))))
+  '((((lambda (f) ((lambda (x) (x x)) (lambda (x) (f (x x)))))
+      (lambda (_.0)
+        (_.0 ((lambda (_.1) (_.0 (_.1 _.1)))
+              (lambda (_.2) (_.0 (_.2 _.2)))))))
+     (=/= ((_.0 _.1)) ((_.0 _.2)))
+     (sym _.0 _.1 _.2))))
+;; (time (run 1 ...))
+;;     3 collections
+;;     0.042179431s elapsed cpu time, including 0.001822860s collecting
+;;     0.042174000s elapsed real time, including 0.001832000s collecting
+;;     31568176 bytes allocated, including 25000224 bytes reclaimed
 
 ;; TODO
 ;; * try synthesizing Z combinator
