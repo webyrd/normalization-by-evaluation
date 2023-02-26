@@ -242,24 +242,24 @@
    (sym _.0 _.1 _.2 _.3)))
 
 
-;; iota from wiki: https://en.wikipedia.org/wiki/Fixed-point_combinator
-(test "check iota"
-  (run 1 (iota)
+;; theta from wiki: https://en.wikipedia.org/wiki/Fixed-point_combinator
+(test "check theta"
+  (run 1 (theta)
     (== '((lambda (x) (lambda (y) (y ((x x) y))))
           (lambda (x) (lambda (y) (y ((x x) y)))))
-        iota)
-    (rfo `(lambda (f) (,iota f)) `(lambda (f) (f (,iota f)))))
+        theta)
+    (rfo `(lambda (f) (,theta f)) `(lambda (f) (f (,theta f)))))
   '(((lambda (x) (lambda (y) (y ((x x) y))))
      (lambda (x) (lambda (y) (y ((x x) y)))))))
 
-(test "synthesize a little bit of iota"
+(test "synthesize a little bit of theta"
   (time
-   (run 1 (iota)
+   (run 1 (theta)
      (fresh (?)
        (== `((lambda (x) (lambda (y) (y (,? y))))
              (lambda (x) (lambda (y) (y ((x x) y)))))
-           iota))
-     (rfo `(lambda (f) (,iota f)) `(lambda (f) (f (,iota f))))))
+           theta))
+     (rfo `(lambda (f) (,theta f)) `(lambda (f) (f (,theta f))))))
   '(((lambda (x) (lambda (y) (y ((x x) y))))
      (lambda (x) (lambda (y) (y ((x x) y)))))))
 

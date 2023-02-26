@@ -261,11 +261,11 @@
 
 ;; From Michael:
 ;; From wiki: https://en.wikipedia.org/wiki/Fixed-point_combinator
-(run 1 (iota)
+(run 1 (theta)
   (== '((lambda (x) (lambda (y) (y ((x x) y))))
         (lambda (x) (lambda (y) (y ((x x) y)))))
-      iota)
-  (rfo `(lambda (f) (,iota f)) `(lambda (f) (f (,iota f)))))
+      theta)
+  (rfo `(lambda (f) (,theta f)) `(lambda (f) (f (,theta f)))))
 ;; =>
 '(((lambda (x) (lambda (y) (y ((x x) y))))
    (lambda (x) (lambda (y) (y ((x x) y))))))
